@@ -18,6 +18,14 @@ class Memo(rlp.Serializable):
         return memo().encode()
 
 
+class Amount(rlp.Serializable):
+    fields = (
+        ('h', Hint),
+        ('amount', big_endian_int),
+        ('cid', text),
+    )
+
+
 class FactSign(rlp.Serializable):
     fields = (
             ('h', Hint),
