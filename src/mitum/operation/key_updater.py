@@ -6,8 +6,6 @@ import rlp
 from rlp.sedes import *
 
 
-# KeyUpdaterFact
-# variable: h(Hint), hs(SHA256), token(str), target(str), cid(str), ks(Keys)
 class KeyUpdaterFact(OperationFact):
     fields = (
         ('h', Hint),
@@ -19,9 +17,6 @@ class KeyUpdaterFact(OperationFact):
     )
     
 
-
-# KeyUpdater
-# variable: memo(Memo), h(Hint), hs(SHA256), fact(KeyUpdaterFact), fact_sg(FactSign[])
 class KeyUpdater(Operation):
     fields = (
         ('memo', Memo),

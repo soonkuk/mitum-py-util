@@ -1,10 +1,9 @@
-from . import BaseKeyPair
+from . import KeyPair
 import rlp
 
 # ecdsa
 
-# ETHKeyPair
-class ETHKeyPair(BaseKeyPair):
+class ETHKeyPair(KeyPair):
     fields = (
         ('h', Hint),
         # ('privkey', text),

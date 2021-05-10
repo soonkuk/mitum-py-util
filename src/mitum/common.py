@@ -2,8 +2,6 @@ import datetime
 import pytz
 
 
-# Hint
-# variable: h_type(str), h_ver(str)
 class Hint(rlp.Serializable):
     fields = (
         ('h_type', text),
@@ -18,6 +16,7 @@ class Hint(rlp.Serializable):
 
 def iso8601TimeStamp():
     return str(datetime.datetime.now(tz=pytz.utc).isoformat())
+
 
 def getNewToken():
     return iso8601TimeStamp()

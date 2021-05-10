@@ -6,8 +6,6 @@ import rlp
 from rlp.sedes import *
 
 
-# CreateAccountsItem
-# variable: h(Hint), amounts(Amount[]), ks(Keys)
 class CreateAccountsItem(rlp.Serializable):
     fields = (
         ('h', Hint),
@@ -16,8 +14,6 @@ class CreateAccountsItem(rlp.Serializable):
     )
 
 
-# CreateAccountsFact
-# variable: h(Hint), hs(SHA256), token(str), sender(str), items(CreateAccountsItem[])
 class CreateAccountsFact(OperationFact):
     fields = (
         ('h', Hint),
@@ -28,8 +24,6 @@ class CreateAccountsFact(OperationFact):
     )
 
 
-# CreateAccounts
-# variable: memo(Memo), h(Hint), hs(SHA256), fact(CreateAccountsFact), fact_sg(FactSign[])
 class CreateAccounts(Operation):
     fields = (
         ('memo', Memo),

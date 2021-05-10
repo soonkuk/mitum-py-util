@@ -1,11 +1,10 @@
-from . import BaseKeyPair
+from . import KeyPair
 import rlp
 
 # bitcoinlib
 # wif
 
-# BTCKeyPair
-class BTCKeyPair(BaseKeyPair):
+class BTCKeyPair(KeyPair):
     fields = (
         ('h', Hint),
         # ('privkey', text),

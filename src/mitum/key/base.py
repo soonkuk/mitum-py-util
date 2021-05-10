@@ -4,9 +4,7 @@ import rlp
 from rlp.sedes import *
 
 
-# BaseKey
-# variable:
-class BaseKeyPair(rlp.Serializable):
+class KeyPair(rlp.Serializable):
     fields = (
         ('h', Hint),
         ('privkey', text),
@@ -18,8 +16,13 @@ class BaseKeyPair(rlp.Serializable):
         pass
 
 
-# Key
-# variable:
+class BaseKey(rlp.Serializable):
+    fields = (
+        ('h', Hint),
+        ('k', text),
+    )
+    
+
 class Key(BaseKey):
     fields = (
         ('h', Hint),
@@ -28,8 +31,6 @@ class Key(BaseKey):
     )
 
 
-# Keys
-# variable:
 class Keys(rlp.Serializable):
     fields = (
         ('h', Hint),

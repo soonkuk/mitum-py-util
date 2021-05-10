@@ -1,10 +1,9 @@
-from . import BaseKeyPair
+from . import KeyPair
 import rlp
 
 # stellar sdk
 
-# StellarKeyPair
-class StellarKeyPair(BaseKeyPair):
+class StellarKeyPair(KeyPair):
     fields = (
         ('h', Hint),
         # ('privkey', text),

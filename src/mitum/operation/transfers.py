@@ -6,8 +6,6 @@ import rlp
 from rlp.sedes import *
 
 
-# TransfersItem
-# variable: 
 class TransfersItem(rlp.Serializable):
     fields = (
         ('h', Hint),
@@ -16,8 +14,6 @@ class TransfersItem(rlp.Serializable):
     )
 
 
-# TransfersFact
-# variable: 
 class TransfersFact(OperationFact):
     fields = (
         ('h', Hint),
@@ -28,8 +24,6 @@ class TransfersFact(OperationFact):
     )
 
 
-# TransfersOperation
-# variable:
 class TransfersOperation(Operation):
     fields = (
         ('memo', Memo),

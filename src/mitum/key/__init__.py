@@ -1,3 +1,3 @@
 from .base import Key
 from .base import Keys
-from .base import BaseKeyPair
+from .base import KeyPair

@@ -1,14 +1,11 @@
 from ..common import getNewToken
 from ..common import Hint
 from ..constant import VERSION
-from . import FactSign
 
 import rlp
 from rlp.sedes import *
 
 
-# Memo
-# variable: content(str)
 class Memo(rlp.Serializable):
     fields = (
         ('m', text),
@@ -21,8 +18,15 @@ class Memo(rlp.Serializable):
         return memo().encode()
 
 
-# OperationFact
-# variable: h(Hint), hs(SHA256), token(bytes)
+class FactSign(rlp.Serializable):
+    fields = (
+            ('h', Hint),
+            ('signer', text),
+            ('sign', text),
+            ('t', text),
+        )
+
+
 class OperationFact(rlp.Serializable):
     fields = (
         ('h', Hint),
@@ -31,8 +35,6 @@ class OperationFact(rlp.Serializable):
     )
 
 
-# Operation
-# variable: h(hint), hs(SHA256), fact(OperationFact), fact_sg(FactSign[])
 class Operation(rlp.Serializable):
     fields = (
         ('h', Hint),

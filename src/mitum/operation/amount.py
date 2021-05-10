@@ -1,7 +1,6 @@
 from ..common import Hint
 
-# Amount
-# variable: h(Hint), amount(int), cid(str)
+
 class Amount(rlp.Serializable):
     fields = (
         ('h', Hint),
