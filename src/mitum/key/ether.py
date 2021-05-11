@@ -1,4 +1,5 @@
 from . import KeyPair
+from ..operation import Hint
 import rlp
 
 # ecdsa

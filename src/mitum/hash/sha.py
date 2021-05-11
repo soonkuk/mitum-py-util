@@ -1,11 +1,12 @@
 import hashlib
 
 
-def sha256(self, b):
-    # self.hs = hashlib sha256
+def sha256(b):
+    return sum256(b)
+
+def dsha256(b):
+    # hashlib sha256 2
     pass
 
-
-def dsha256(self, b):
-    # self.hs = hashlib sha256 2
-    pass
+def sum256(b):
+    return hashlib.sha3_256(b).hexdigest()

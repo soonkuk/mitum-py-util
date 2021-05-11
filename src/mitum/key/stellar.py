@@ -1,4 +1,5 @@
 from . import KeyPair
+from ..operation import Hint
 import rlp
 
 # stellar sdk
@@ -14,3 +15,5 @@ class StellarKeyPair(KeyPair):
     def sign(self, b):
         # sign
         pass
+
+    
