@@ -1,5 +1,5 @@
-from . import KeyPair
-from ..operation import Hint
+from mitum.key import KeyPair
+from mitum.common import Hint
 import rlp
 
 # stellar sdk
@@ -11,7 +11,6 @@ class StellarKeyPair(KeyPair):
         # ('pubkey', text),
     )
 
-    @classmethod
     def sign(self, b):
         # sign
         pass

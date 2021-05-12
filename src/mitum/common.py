@@ -5,7 +5,7 @@ import rlp
 from rlp.sedes import big_endian_int, text
 
 
-class String(rlp.Serializable):
+class Text(rlp.Serializable):
     fields = (
         ('content', text),
     )
@@ -23,7 +23,7 @@ class Int(rlp.Serializable):
     )
 
     def to_bytes(self):
-        n = self.as_dict()['int']
+        n = abs(self.as_dict()['int'])
         blen = self.byte_length()
         return n.to_bytes(length=blen, byteorder='big')
 
@@ -57,4 +57,7 @@ def bconcat(*blist):
     for i in blist:
         concated += bytearray(i)
     
+    print('[CALL] bconcat(): ' + str(blist))
+    print('- (concated) ' + str(concated))
+    print()
     return bytes(concated)

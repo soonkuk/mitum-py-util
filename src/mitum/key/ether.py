@@ -1,5 +1,5 @@
-from . import KeyPair
-from ..operation import Hint
+from mitum.key import KeyPair
+from mitum.common import Hint
 import rlp
 
 # ecdsa
@@ -11,7 +11,6 @@ class ETHKeyPair(KeyPair):
         # ('pubkey', text),
     )
 
-    @classmethod
     def sign(self, b):
         # hs = sha256 checksum(b)
         # signature = ecdsa sign(hs)

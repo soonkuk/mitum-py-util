@@ -2,6 +2,7 @@ import hashlib
 
 
 def sha256(b):
+    print('[CALL] sha256(' + str(b) + ')')
     return sum256(b)
 
 def dsha256(b):
@@ -9,4 +10,6 @@ def dsha256(b):
     pass
 
 def sum256(b):
-    return hashlib.sha3_256(b).hexdigest()
+    sha3 = hashlib.sha3_256()
+    sha3.update(b)
+    return sha3.digest()

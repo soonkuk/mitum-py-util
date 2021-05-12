@@ -1,5 +1,5 @@
-from ..common import bconcat
-from ..common import Hint, String, Int
+from mitum.common import bconcat
+from mitum.common import Hint, Text, Int
 
 import rlp
 from rlp.sedes import *
@@ -7,7 +7,7 @@ from rlp.sedes import *
 
 class Memo(rlp.Serializable):
     fields = (
-        ('m', String),
+        ('m', Text),
     )
     
     def memo(self):
@@ -21,13 +21,14 @@ class Amount(rlp.Serializable):
     fields = (
         ('h', Hint),
         ('big', Int),
-        ('cid', String),
+        ('cid', Text),
     )
 
     def to_bytes(self):
         d = self.as_dict()
         big_byte = d['big'].to_bytes()
         cid_byte = d['cid'].to_bytes()
+        print('[CALL] Amount.to_bytes()')
         return bconcat(big_byte, cid_byte)
 
 
@@ -43,7 +44,7 @@ class FactSign(rlp.Serializable):
 class Address(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('addr', String),
+        ('addr', Text),
     )
 
     def hint(self):
@@ -63,15 +64,13 @@ class Address(rlp.Serializable):
 class OperationFactBody(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('token', String),
+        ('token', Text),
     )
 
-    @classmethod
-    def to_bytes(cls):
+    def to_bytes(self):
         pass
 
-    @classmethod
-    def generate_hash(cls):
+    def generate_hash(self):
         pass
 
 class OperationFact(rlp.Serializable):
@@ -80,20 +79,18 @@ class OperationFact(rlp.Serializable):
         ('body', OperationFactBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 
 
 class OperationBody(rlp.Serializable):
     fields = (
         ('h', Hint),
         ('fact', OperationFact),
-        ('fact_sg', List(FactSign,), False),
+        ('fact_sg', List((FactSign,), False)),
     )
 
-    @classmethod
-    def generate_hash(cls):
+    def generate_hash(self):
         pass
 
 class Operation(rlp.Serializable):
@@ -102,7 +99,6 @@ class Operation(rlp.Serializable):
         ('body', OperationBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 

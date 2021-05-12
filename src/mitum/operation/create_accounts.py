@@ -1,8 +1,10 @@
-from . import *
-from ..common import Hint, String
-from ..common import bconcat
-from ..key import Keys
-from ..hash import sha
+from mitum.operation import Memo, FactSign, Amount, Address
+from mitum.operation import OperationBody, Operation
+from mitum.operation import OperationFactBody, OperationFact
+from mitum.common import Hint, Text
+from mitum.common import bconcat
+from mitum.key.base import Keys
+from mitum.hash import sha
 
 import rlp
 from rlp.sedes import *
@@ -25,20 +27,20 @@ class CreateAccountsItem(rlp.Serializable):
 
         bkeys = d['ks'].to_bytes()
         bamounts = bytes(bamounts)
+        print('[CALL] CreateAccountsItem.to_bytes()')
         return bconcat(bkeys, bamounts)
 
 
 class CreateAccountsFactBody(OperationFactBody):
     fields = (
         ('h', Hint),
-        ('token', String),
+        ('token', Text),
         ('sender', Address),
         ('items', List((CreateAccountsItem,), False)),
     )
 
-    @classmethod
-    def to_bytes(cls):
-        d = cls.as_dict()
+    def to_bytes(self):
+        d = self.as_dict()
         items = d['items']
 
         bitems = bytearray()
@@ -48,11 +50,11 @@ class CreateAccountsFactBody(OperationFactBody):
         btoken = d['token'].to_bytes()
         bsender = d['sender'].to_bytes_hinted()
         bitems = bytes(bitems)
+        print('[CALL] CreateAccountsFactBody.to_bytes()')
         return bconcat(btoken, bsender, bitems)
 
-    @classmethod
-    def generate_hash(cls):
-        return sha.sha256(cls.to_bytes())
+    def generate_hash(self):
+        return sha.sha256(self.to_bytes())
 
 
 class CreateAccountsFact(OperationFact):
@@ -61,9 +63,8 @@ class CreateAccountsFact(OperationFact):
         ('body', CreateAccountsFactBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 
 
 class CreateAccountsBody(OperationBody):
@@ -74,8 +75,7 @@ class CreateAccountsBody(OperationBody):
         ('fact_sg', List((FactSign,), False)),
     )
 
-    @classmethod
-    def generate_hash(cls):
+    def generate_hash(self):
         pass
 
 
@@ -85,7 +85,6 @@ class CreateAccounts(Operation):
         ('body', CreateAccountsBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 

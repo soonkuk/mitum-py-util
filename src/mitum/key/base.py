@@ -1,6 +1,6 @@
-from ..common import Hint, String, Int
-from ..common import bconcat
-from ..hash import sha
+from mitum.common import Hint, Text, Int
+from mitum.common import bconcat
+from mitum.hash import sha
 
 import rlp
 from rlp.sedes import *
@@ -9,35 +9,42 @@ from rlp.sedes import *
 class KeyPair(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('privkey', String),
-        ('pubkey', String),
+        ('privkey', Text),
+        ('pubkey', Text),
     )
 
-    @classmethod
-    def sign(cls):
+    def sign(self):
         pass
 
 
 class BaseKey(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('k', String),
+        ('k', Text),
     )
+
+    def to_bytes(self):
+        return self.as_dict()['k'].encode()
+
+    def hinted(self):
+        return self.as_dict()['k'] + "-" + self.as_dict()['h'].hint
     
 
-class Key(BaseKey):
+class Key(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('k', String),
+        ('k', BaseKey),
         ('w', Int),
     )
 
-    def hinted(self):
-        return self.as_dict()['k'].content() + "-" + self.as_dict()['h'].hint
+    def key_bytes(self):
+        return self.as_dict()['k'].to_bytes()
 
     def to_bytes(self):
-        bkey = self.hinted().encode()
+        d = self.as_dict()
+        bkey = d['k'].hinted().encode()
         bweight = self.as_dict()['w'].to_bytes()
+        print('[CALL] Key.to_bytes()')
         return bconcat(bkey, bweight)
 
 
@@ -53,7 +60,7 @@ class KeysBody(rlp.Serializable):
         keys = d['ks']
 
         lkeys = list(keys)
-        lkeys.sort(key=lambda x: x.to_bytes())
+        lkeys.sort(key=lambda x: x.key_bytes())
 
         bkeys = bytearray()
         for k in lkeys:
@@ -61,6 +68,7 @@ class KeysBody(rlp.Serializable):
 
         bkeys = bytes(bkeys)
         bthreshold = d['threshold'].to_bytes()
+        print('[CALL] KeysBody.to_bytes()')
         return bconcat(bkeys, bthreshold)
 
     def generate_hash(self):
@@ -75,3 +83,6 @@ class Keys(rlp.Serializable):
 
     def to_bytes(self):
         return self.as_dict()['body'].to_bytes()
+
+    def hash(self):
+        return self.as_dict()['hs']

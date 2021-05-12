@@ -1,7 +1,9 @@
-from . import *
-from ..common import Hint, String
-from ..common import bconcat
-from ..hash import sha
+from mitum.operation import Memo, FactSign, Amount, Address
+from mitum.operation import OperationBody, Operation
+from mitum.operation import OperationFactBody, OperationFact
+from mitum.common import Hint, Text
+from mitum.common import bconcat
+from mitum.hash import sha
 
 import rlp
 from rlp.sedes import *
@@ -24,20 +26,20 @@ class TransfersItem(rlp.Serializable):
 
         breceiver = d['receiver'].to_bytes()
         bamounts = bytes(bamounts)
+        print('[CALL] TransfersItem.to_bytes()')
         return bconcat(breceiver, bamounts)
 
 
 class TransfersFactBody(OperationFactBody):
     fields = (
         ('h', Hint),
-        ('token', String),
+        ('token', Text),
         ('sender', Address),
         ('items', List((TransfersItem, ), False)),
     )
-    
-    @classmethod
-    def to_bytes(cls):
-        d = cls.as_dict()
+
+    def to_bytes(self):
+        d = self.as_dict()
         items = d['items']
 
         bitems = bytearray()
@@ -49,10 +51,8 @@ class TransfersFactBody(OperationFactBody):
         bitems = bytes(bitems)
         return bconcat(btoken, bsender, bitems)
 
-
-    @classmethod
-    def generate_hash(cls):
-        return sha.sha256(cls.to_bytes())
+    def generate_hash(self):
+        return sha.sha256(self.to_bytes())
 
 
 class TransfersFact(OperationFact):
@@ -61,9 +61,8 @@ class TransfersFact(OperationFact):
         ('body', TransfersFactBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 
 
 class TransfersBody(OperationBody):
@@ -74,8 +73,7 @@ class TransfersBody(OperationBody):
         ('fact_sg', List((FactSign,), False)),
     )
 
-    @classmethod
-    def generate_hash(cls):
+    def generate_hash(self):
         pass
 
 
@@ -85,7 +83,6 @@ class Transfers(Operation):
         ('body', TransfersBody),
     )
 
-    @classmethod
-    def hash(cls):
-        return cls.as_dict()['hs']
+    def hash(self):
+        return self.as_dict()['hs']
 
