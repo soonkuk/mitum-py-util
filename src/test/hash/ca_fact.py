@@ -7,6 +7,10 @@ from mitum.key.base import BaseKey, Key, Keys, KeysBody
 
 import base58
 
+
+EXPECTED_KEYS_HASH = "4UM4CN8MZNyv26TK84486CX5X8bu9EUYbsWz5ovRsp1M"
+EXPECTED_FACT_HASH = "DB9AKEj6BKDpBeTnDGBrewECW7CYmYkJPU24VEdypinQ"
+
 print()
 
 k = "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"
@@ -29,10 +33,6 @@ keys = Keys(
     keys_body.generate_hash(),
     keys_body,
 )
-
-print('- (hash) ' + str(keys.hash()))
-print('- (base58 hash) ' + str(base58.b58encode(keys.hash())))
-print()
 
 single_amount = Amount(
     Hint(HINT.MC_AMOUNT, VERSION),
@@ -65,9 +65,5 @@ fact = CreateAccountsFact(
     fact_body,
 )
 
-print('- (hash) ' + str(fact.hash()))
-print('- (base58 hash) ' + str(base58.b58encode(fact.hash())))
-print()
-print('<FACT>')
-print(fact.as_dict())
-print()
+print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == base58.b58encode(keys.hash()).decode()))
+print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == base58.b58encode(fact.hash()).decode()))

@@ -4,6 +4,7 @@ from mitum.operation import OperationFactBody, OperationFact
 from mitum.common import Hint, Text
 from mitum.common import bconcat
 from mitum.hash import sha
+import mitum.log as log
 
 import rlp
 from rlp.sedes import *
@@ -26,7 +27,8 @@ class TransfersItem(rlp.Serializable):
 
         breceiver = d['receiver'].to_bytes()
         bamounts = bytes(bamounts)
-        print('[CALL] TransfersItem.to_bytes()')
+        
+        log.rlog('TransfersItem', log.LOG_TO_BYTES, '')
         return bconcat(breceiver, bamounts)
 
 
@@ -49,6 +51,8 @@ class TransfersFactBody(OperationFactBody):
         btoken = d['token'].to_bytes()
         bsender = d['sender'].to_bytes()
         bitems = bytes(bitems)
+
+        log.rlog('TransfersFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, bsender, bitems)
 
     def generate_hash(self):

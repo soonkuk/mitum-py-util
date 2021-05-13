@@ -5,6 +5,7 @@ from mitum.common import Hint, Text
 from mitum.common import bconcat
 from mitum.key.base import Keys
 from mitum.hash import sha
+import mitum.log as log
 
 import rlp
 from rlp.sedes import *
@@ -27,7 +28,8 @@ class CreateAccountsItem(rlp.Serializable):
 
         bkeys = d['ks'].to_bytes()
         bamounts = bytes(bamounts)
-        print('[CALL] CreateAccountsItem.to_bytes()')
+
+        log.rlog('CreateAccountsItem', log.LOG_TO_BYTES, '')
         return bconcat(bkeys, bamounts)
 
 
@@ -50,7 +52,8 @@ class CreateAccountsFactBody(OperationFactBody):
         btoken = d['token'].to_bytes()
         bsender = d['sender'].to_bytes_hinted()
         bitems = bytes(bitems)
-        print('[CALL] CreateAccountsFactBody.to_bytes()')
+
+        log.rlog('CreateAccountsFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, bsender, bitems)
 
     def generate_hash(self):
@@ -75,8 +78,22 @@ class CreateAccountsBody(OperationBody):
         ('fact_sg', List((FactSign,), False)),
     )
 
+    def to_bytes(self):
+        d = self.as_dict()
+        bfact_hs = d['fact'].hash()
+        bmemo = d['memo'].to_bytes()
+
+        fact_sg = d['fact_sg']
+        bfact_sg = bytearray()
+        for sg in fact_sg:
+            bfact_sg += bytearray(sg.to_bytes())
+        bfact_sg = bytes(bfact_sg)
+
+        log.rlog('CreateAccountsBody', log.LOG_TO_BYTES, '')
+        return bconcat(bfact_hs, bfact_sg, bmemo)
+
     def generate_hash(self):
-        pass
+        return sha.sha256(self.to_bytes())
 
 
 class CreateAccounts(Operation):

@@ -1,5 +1,6 @@
 from mitum.common import bconcat
 from mitum.common import Hint, Text, Int
+import mitum.log as log
 
 import rlp
 from rlp.sedes import *
@@ -28,17 +29,9 @@ class Amount(rlp.Serializable):
         d = self.as_dict()
         big_byte = d['big'].to_bytes()
         cid_byte = d['cid'].to_bytes()
-        print('[CALL] Amount.to_bytes()')
+
+        log.rlog('Amount', log.LOG_TO_BYTES, '')
         return bconcat(big_byte, cid_byte)
-
-
-class FactSign(rlp.Serializable):
-    fields = (
-            ('h', Hint),
-            ('signer', text),
-            ('sign', text),
-            ('t', text),
-        )
 
 
 class Address(rlp.Serializable):
@@ -61,6 +54,23 @@ class Address(rlp.Serializable):
         return self.hinted().encode()
 
 
+class FactSign(rlp.Serializable):
+    fields = (
+            ('h', Hint),
+            ('signer', Address),
+            ('sign', Text),
+            ('t', Text),
+        )
+
+    def to_bytes(self):
+        d = self.as_dict()
+        bsigner = d['signer'].to_bytes()
+        bsign = d['sign'].to_bytes()
+        btime = d['t'].to_bytes()
+
+        return bconcat(bsigner, bsign, btime)
+
+
 class OperationFactBody(rlp.Serializable):
     fields = (
         ('h', Hint),
@@ -72,6 +82,7 @@ class OperationFactBody(rlp.Serializable):
 
     def generate_hash(self):
         pass
+
 
 class OperationFact(rlp.Serializable):
     fields = (
@@ -93,6 +104,7 @@ class OperationBody(rlp.Serializable):
     def generate_hash(self):
         pass
 
+
 class Operation(rlp.Serializable):
     fields = (
         ('hs', text),
@@ -101,4 +113,3 @@ class Operation(rlp.Serializable):
 
     def hash(self):
         return self.as_dict()['hs']
-

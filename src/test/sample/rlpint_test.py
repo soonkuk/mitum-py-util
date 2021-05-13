@@ -8,8 +8,9 @@ class Target(rlp.Serializable):
     )
 
 
-target = Target(333)
-compare = int(333)
+target = Target(88)
+compare = int(88)
 
-print(target.as_dict()['int'].to_bytes(length=5, byteorder='big'))
-print(compare.to_bytes(length=5, byteorder='big'))
+print(compare.bit_length())
+print(target.as_dict()['int'].to_bytes(length=1, byteorder='big'))
+print(compare.to_bytes(length=1, byteorder='big'))

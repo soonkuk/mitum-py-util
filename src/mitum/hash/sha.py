@@ -1,8 +1,10 @@
+import mitum.log as log
+import base58
 import hashlib
 
-
 def sha256(b):
-    print('[CALL] sha256(' + str(b) + ')')
+    digest = sum256(b)
+    log.rlog('', log.LOG_SHA256, b, str(base58.b58encode(digest)))
     return sum256(b)
 
 def dsha256(b):

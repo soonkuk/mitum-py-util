@@ -5,6 +5,7 @@ from mitum.common import Hint, Text
 from mitum.common import bconcat
 from mitum.key.base import Keys
 from mitum.hash import sha
+import mitum.log as log
 
 from rlp.sedes import *
 
@@ -25,7 +26,8 @@ class KeyUpdaterFactBody(OperationFactBody):
         btarget = d['target'].to_bytes_hinted()
         bkeys = d['ks'].to_bytes()
         bcid = d['cid'].to_bytes()
-        print('[CALL] KeyUpdaterFactBoey.to_bytes()')
+      
+        log.rlog('KeyUpdaterFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, btarget, bkeys, bcid)
 
 

@@ -1,3 +1,4 @@
+import mitum.log as log
 import datetime
 import pytz
 
@@ -22,13 +23,22 @@ class Int(rlp.Serializable):
         ('int', big_endian_int),
     )
 
-    def to_bytes(self):
-        n = abs(self.as_dict()['int'])
-        blen = self.byte_length()
-        return n.to_bytes(length=blen, byteorder='big')
+    # def abs_bytes(self):
+    #     result = self.to_bytes()
+    #     return bytes(bytearray(result)[::-1])
 
-    def byte_length(self):
-        return (self.as_dict()['int'].bit_length() + 7) // 8
+    def to_bytes(self):
+        n = self.as_dict()['int']
+        count = 0
+
+        result = bytearray()
+        while (n):
+            result.append(n & 0xff)
+            n = n >> 8
+            count += 1
+        result = bytearray([0]* (8-count)) + result
+
+        return bytes(result[::-1])
 
 
 class Hint(rlp.Serializable):
@@ -57,7 +67,5 @@ def bconcat(*blist):
     for i in blist:
         concated += bytearray(i)
     
-    print('[CALL] bconcat(): ' + str(blist))
-    print('- (concated) ' + str(concated))
-    print()
+    log.rlog('', log.LOG_BCONCAT, blist, concated, list(concated))
     return bytes(concated)
