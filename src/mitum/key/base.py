@@ -1,21 +1,9 @@
-from mitum.common import Hint, Text, Int
-from mitum.common import bconcat
-from mitum.hash import sha
 import mitum.log as log
-
 import rlp
-from rlp.sedes import *
-
-
-class KeyPair(rlp.Serializable):
-    fields = (
-        ('h', Hint),
-        ('privkey', Text),
-        ('pubkey', Text),
-    )
-
-    def sign(self):
-        pass
+from mitum.common import Hash, Hint, Int, Text, bconcat
+from mitum.hash import sha
+from rlp.sedes import List
+from mitum.constant import VERSION
 
 
 class BaseKey(rlp.Serializable):
@@ -23,6 +11,10 @@ class BaseKey(rlp.Serializable):
         ('h', Hint),
         ('k', Text),
     )
+
+    @property
+    def key(self):
+        return self.as_dict()['k']
 
     def to_bytes(self):
         return self.as_dict()['k'].encode()
@@ -80,7 +72,7 @@ class KeysBody(rlp.Serializable):
 
 class Keys(rlp.Serializable):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', KeysBody),
     )
 
@@ -89,3 +81,18 @@ class Keys(rlp.Serializable):
 
     def hash(self):
         return self.as_dict()['hs']
+
+
+class KeyPair(rlp.Serializable):
+    fields = (
+        ('privkey', BaseKey),
+        ('pubkey', BaseKey),
+    )
+
+    def sign(self):
+        pass
+
+
+def to_basekey(type, k):
+    hint = Hint(type, VERSION)
+    return BaseKey(hint, k)

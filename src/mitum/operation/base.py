@@ -1,9 +1,7 @@
-from mitum.common import bconcat
-from mitum.common import Hint, Text, Int
 import mitum.log as log
-
 import rlp
-from rlp.sedes import *
+from mitum.common import Hash, Hint, Int, Text, bconcat
+from rlp.sedes import List
 
 
 class Memo(rlp.Serializable):
@@ -86,7 +84,7 @@ class OperationFactBody(rlp.Serializable):
 
 class OperationFact(rlp.Serializable):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', OperationFactBody),
     )
 
@@ -107,7 +105,7 @@ class OperationBody(rlp.Serializable):
 
 class Operation(rlp.Serializable):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', OperationBody),
     )
 

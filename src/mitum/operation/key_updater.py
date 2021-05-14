@@ -1,13 +1,10 @@
-from mitum.operation import Memo, FactSign, Address
-from mitum.operation import OperationBody, Operation
-from mitum.operation import OperationFactBody, OperationFact
-from mitum.common import Hint, Text
-from mitum.common import bconcat
-from mitum.key.base import Keys
-from mitum.hash import sha
 import mitum.log as log
-
-from rlp.sedes import *
+from mitum.common import Hash, Hint, Text, bconcat
+from mitum.hash import sha
+from mitum.key.base import Keys
+from mitum.operation import (Address, FactSign, Memo, Operation, OperationBody,
+                             OperationFact, OperationFactBody)
+from rlp.sedes import List
 
 
 class KeyUpdaterFactBody(OperationFactBody):
@@ -37,7 +34,7 @@ class KeyUpdaterFactBody(OperationFactBody):
 
 class KeyUpdaterFact(OperationFact):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', KeyUpdaterFactBody),
     )
 
@@ -53,13 +50,27 @@ class KeyUpdaterBody(OperationBody):
         ('fact_sg', List((FactSign,), False)),
     )
 
+    def to_bytes(self):
+        d = self.as_dict()
+        bfact_hs = d['fact'].hash().digest()
+        bmemo = d['memo'].to_bytes()
+
+        fact_sg = d['fact_sg']
+        bfact_sg = bytearray()
+        for sg in fact_sg:
+            bfact_sg += bytearray(sg.to_bytes())
+        bfact_sg = bytes(bfact_sg)
+
+        log.rlog('KeyUpdaterBody', log.LOG_TO_BYTES, '')
+        return bconcat(bfact_hs, bfact_sg, bmemo)
+
     def generate_hash(self):
-        pass
+        return sha.sha256(self.to_bytes())
 
 
 class KeyUpdater(Operation):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', KeyUpdaterBody),
     )
 

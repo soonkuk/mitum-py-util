@@ -1,9 +1,11 @@
-import mitum.log as log
 import datetime
-import pytz
 
+import base58
+import pytz
 import rlp
-from rlp.sedes import big_endian_int, text
+from rlp.sedes import big_endian_int, binary, text
+
+import mitum.log as log
 
 
 class Text(rlp.Serializable):
@@ -22,11 +24,7 @@ class Int(rlp.Serializable):
     fields = (
         ('int', big_endian_int),
     )
-
-    # def abs_bytes(self):
-    #     result = self.to_bytes()
-    #     return bytes(bytearray(result)[::-1])
-
+    
     def to_bytes(self):
         n = self.as_dict()['int']
         count = 0
@@ -51,6 +49,18 @@ class Hint(rlp.Serializable):
     def hint(self):
         d = self.as_dict()
         return d['h_type'] + ":" + d['h_ver']
+
+
+class Hash(rlp.Serializable):
+    fields = (
+        ('hs', binary),
+    )
+
+    def digest(self):
+        return self.as_dict()['hs']
+
+    def hash(self):
+        return base58.b58encode(self.as_dict()['hs']).decode()
 
 
 def iso8601TimeStamp():

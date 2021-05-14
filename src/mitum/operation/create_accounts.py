@@ -1,14 +1,11 @@
-from mitum.operation import Memo, FactSign, Amount, Address
-from mitum.operation import OperationBody, Operation
-from mitum.operation import OperationFactBody, OperationFact
-from mitum.common import Hint, Text
-from mitum.common import bconcat
-from mitum.key.base import Keys
-from mitum.hash import sha
 import mitum.log as log
-
 import rlp
-from rlp.sedes import *
+from mitum.common import Hash, Hint, Text, bconcat
+from mitum.hash import sha
+from mitum.key.base import Keys
+from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
+                             OperationBody, OperationFact, OperationFactBody)
+from rlp.sedes import List
 
 
 class CreateAccountsItem(rlp.Serializable):
@@ -62,7 +59,7 @@ class CreateAccountsFactBody(OperationFactBody):
 
 class CreateAccountsFact(OperationFact):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', CreateAccountsFactBody),
     )
 
@@ -80,7 +77,7 @@ class CreateAccountsBody(OperationBody):
 
     def to_bytes(self):
         d = self.as_dict()
-        bfact_hs = d['fact'].hash()
+        bfact_hs = d['fact'].hash().digest()
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']
@@ -98,7 +95,7 @@ class CreateAccountsBody(OperationBody):
 
 class CreateAccounts(Operation):
     fields = (
-        ('hs', text),
+        ('hs', Hash),
         ('body', CreateAccountsBody),
     )
 

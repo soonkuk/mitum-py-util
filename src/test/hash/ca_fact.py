@@ -1,12 +1,11 @@
 import mitum.hint as HINT
-from mitum.common import Hint, Text, Int
+from mitum.common import Hint, Int, Text
 from mitum.constant import VERSION
-from mitum.operation import Amount, Address
-from mitum.operation.create_accounts import CreateAccountsItem, CreateAccountsFactBody, CreateAccountsFact
 from mitum.key.base import BaseKey, Key, Keys, KeysBody
-
-import base58
-
+from mitum.operation import Address, Amount
+from mitum.operation.create_accounts import (CreateAccountsFact,
+                                             CreateAccountsFactBody,
+                                             CreateAccountsItem)
 
 EXPECTED_KEYS_HASH = "4UM4CN8MZNyv26TK84486CX5X8bu9EUYbsWz5ovRsp1M"
 EXPECTED_FACT_HASH = "DB9AKEj6BKDpBeTnDGBrewECW7CYmYkJPU24VEdypinQ"
@@ -59,11 +58,10 @@ fact_body = CreateAccountsFactBody(
     item_list,
 )
 
-
 fact = CreateAccountsFact(
     fact_body.generate_hash(),
     fact_body,
 )
 
-print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == base58.b58encode(keys.hash()).decode()))
-print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == base58.b58encode(fact.hash()).decode()))
+print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == keys.hash().hash()))
+print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == fact.hash().hash()))

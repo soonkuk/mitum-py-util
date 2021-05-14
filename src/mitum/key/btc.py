@@ -1,18 +1,34 @@
-from mitum.key import KeyPair
 from mitum.common import Hint
-import rlp
+from mitum.hash import sha
+from mitum.hint import BTC_PBLCKEY, BTC_PRIVKEY
+from mitum.key.base import BaseKey, KeyPair, to_basekey
 
-# bitcoinlib
-# wif
+from bitcoinutils.setup import setup
+from bitcoinutils.keys import PrivateKey, PublicKey
+from bitcoinaddress import Wallet
 
 class BTCKeyPair(KeyPair):
     fields = (
-        ('h', Hint),
-        # ('privkey', text),
-        # ('pubkey', text),
+        ('privkey', BaseKey),
+        ('pubkey', BaseKey),
     )
 
     def sign(self, b):
-        # hs = double sha256 hash
-        # signature = ecdsa(hs)
+        # setup('mainnet')
+        
+        # wallet = Wallet(self.as_dict()['privkey'].key)
+        # privk = PrivateKey(wif=wallet.key.mainnet.wifc)
+
+        # bhash = sha.dsha256(b)
+
+        # signature = privk.sign_message(b, compressed=False)
+        # signature
+        # return signature
         pass
+
+
+def new_btc_keypair():
+    pass
+
+def to_btc_keypair(k):
+    pass

@@ -1,7 +1,10 @@
+# method constants
 LOG_SHA256 = 'sha256'
+LOG_DSHA256 = 'dsha256'
 LOG_BCONCAT = 'bconcat'
 LOG_TO_BYTES = 'to_bytes'
 
+# log: call method
 def clog(caller, func, msg):
     if func == LOG_SHA256:
         print('[CALL] ' + func + '(' + str(msg) + ')')
@@ -12,6 +15,7 @@ def clog(caller, func, msg):
         print('[CALL] ' + caller + '.' + func + '()')
     
 
+# log: print result
 def rlog(caller, func, msg, *result):
     clog(caller, func, msg)
     for r in result:
