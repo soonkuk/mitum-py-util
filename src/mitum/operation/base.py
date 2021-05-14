@@ -25,11 +25,11 @@ class Amount(rlp.Serializable):
 
     def to_bytes(self):
         d = self.as_dict()
-        big_byte = d['big'].to_bytes()
-        cid_byte = d['cid'].to_bytes()
+        bbig = d['big'].tight_bytes()
+        bcid = d['cid'].to_bytes()
 
         log.rlog('Amount', log.LOG_TO_BYTES, '')
-        return bconcat(big_byte, cid_byte)
+        return bconcat(bbig, bcid)
 
 
 class Address(rlp.Serializable):

@@ -25,6 +25,16 @@ class Int(rlp.Serializable):
         ('int', big_endian_int),
     )
     
+    def tight_bytes(self):
+        n = abs(self.as_dict()['int'])
+        
+        result = bytearray()
+        while(n):
+            result.append(n & 0xff)
+            n = n >> 8
+        
+        return bytes(result[::-1])
+
     def to_bytes(self):
         n = self.as_dict()['int']
         count = 0

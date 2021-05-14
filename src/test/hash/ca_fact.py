@@ -8,7 +8,7 @@ from mitum.operation.create_accounts import (CreateAccountsFact,
                                              CreateAccountsItem)
 
 EXPECTED_KEYS_HASH = "4UM4CN8MZNyv26TK84486CX5X8bu9EUYbsWz5ovRsp1M"
-EXPECTED_FACT_HASH = "DB9AKEj6BKDpBeTnDGBrewECW7CYmYkJPU24VEdypinQ"
+EXPECTED_FACT_HASH = "7QR9ffV19CHuYypAzmQfBnpB3HMLkdvcwzhj3MSEZwH7"
 
 print()
 
