@@ -1,6 +1,13 @@
-# CreateAccontsFact hashing test
-print("-" * 10 + "<CreateAccountsFact Hashing Test>" + "-" * 10)
-exec(open('./test/hash/ca_fact.py').read())
+print()
+
+# # CreateAccontsFact hashing test
+# print("-" * 10 + "<CreateAccountsFact Hashing Test>" + "-" * 10)
+# exec(open('./test/hash/ca_fact.py').read())
+
+# CreateAccounts hashing test
+print('\n')
+print("-" * 10 + "<CreateAccounts Hashing Test>" + "-" * 10)
+exec(open('./test/hash/ca_hash.py').read())
 
 # KeyUpdaterFact hashing test
 print('\n')

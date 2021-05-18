@@ -1,11 +1,11 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, Text, bconcat
+from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
 from mitum.key.base import Keys
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
-from rlp.sedes import List
+from rlp.sedes import List, text
 
 
 class CreateAccountsItem(rlp.Serializable):
@@ -33,7 +33,7 @@ class CreateAccountsItem(rlp.Serializable):
 class CreateAccountsFactBody(OperationFactBody):
     fields = (
         ('h', Hint),
-        ('token', Text),
+        ('token', text),
         ('sender', Address),
         ('items', List((CreateAccountsItem,), False)),
     )
@@ -46,8 +46,8 @@ class CreateAccountsFactBody(OperationFactBody):
         for i in items:
             bitems += bytearray(i.to_bytes())
         
-        btoken = d['token'].to_bytes()
-        bsender = d['sender'].to_bytes_hinted()
+        btoken = d['token'].encode()
+        bsender = d['sender'].hinted.encode()
         bitems = bytes(bitems)
 
         log.rlog('CreateAccountsFactBody', log.LOG_TO_BYTES, '')
@@ -63,6 +63,7 @@ class CreateAccountsFact(OperationFact):
         ('body', CreateAccountsFactBody),
     )
 
+    @property
     def hash(self):
         return self.as_dict()['hs']
 
@@ -77,7 +78,8 @@ class CreateAccountsBody(OperationBody):
 
     def to_bytes(self):
         d = self.as_dict()
-        bfact_hs = d['fact'].hash().digest()
+        bfact_hs = d['fact'].hash.digest
+        # bfact_hs = d['fact'].hash.hash.encode()
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']
@@ -99,6 +101,7 @@ class CreateAccounts(Operation):
         ('body', CreateAccountsBody),
     )
 
+    @property
     def hash(self):
         return self.as_dict()['hs']
 

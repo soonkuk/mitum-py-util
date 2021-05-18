@@ -1,15 +1,15 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, Int, Text, bconcat
-from mitum.hash import sha
-from rlp.sedes import List
+from mitum.common import Hash, Hint, Int, bconcat
 from mitum.constant import VERSION
+from mitum.hash import sha
+from rlp.sedes import List, text
 
 
 class BaseKey(rlp.Serializable):
     fields = (
         ('h', Hint),
-        ('k', Text),
+        ('k', text),
     )
 
     @property
@@ -19,6 +19,7 @@ class BaseKey(rlp.Serializable):
     def to_bytes(self):
         return self.as_dict()['k'].encode()
 
+    @property
     def hinted(self):
         return self.as_dict()['k'] + "-" + self.as_dict()['h'].hint
     
@@ -35,7 +36,7 @@ class Key(rlp.Serializable):
 
     def to_bytes(self):
         d = self.as_dict()
-        bkey = d['k'].hinted().encode()
+        bkey = d['k'].hinted.encode()
         bweight = self.as_dict()['w'].to_bytes()
 
         log.rlog('Key', log.LOG_TO_BYTES, '')
@@ -79,6 +80,7 @@ class Keys(rlp.Serializable):
     def to_bytes(self):
         return self.as_dict()['body'].to_bytes()
 
+    @property
     def hash(self):
         return self.as_dict()['hs']
 

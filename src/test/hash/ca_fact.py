@@ -1,5 +1,5 @@
 import mitum.hint as HINT
-from mitum.common import Hint, Int, Text
+from mitum.common import Hint, Int
 from mitum.constant import VERSION
 from mitum.key.base import BaseKey, Key, Keys, KeysBody
 from mitum.operation import Address, Amount
@@ -36,7 +36,7 @@ keys = Keys(
 single_amount = Amount(
     Hint(HINT.MC_AMOUNT, VERSION),
     Int(1000),
-    Text("MCC"),
+    "MCC",
 )
 
 amount_list = list()
@@ -53,8 +53,8 @@ item_list.append(single_item)
 
 fact_body = CreateAccountsFactBody(
     Hint(HINT.MC_CREATE_ACCOUNTS_OP_FACT, VERSION),
-    Text("MjAyMS0wNS0xMlQwNzo1MTowNC40NDI0NTRa"),
-    Address(Hint(HINT.MC_ADDRESS, VERSION), Text("8PdeEpvqfyL3uZFHRZG5PS3JngYUzFFUGPvCg29C2dBn")),
+    "MjAyMS0wNS0xMlQwNzo1MTowNC40NDI0NTRa",
+    Address(Hint(HINT.MC_ADDRESS, VERSION), "8PdeEpvqfyL3uZFHRZG5PS3JngYUzFFUGPvCg29C2dBn"),
     item_list,
 )
 
@@ -63,5 +63,5 @@ fact = CreateAccountsFact(
     fact_body,
 )
 
-print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == keys.hash().hash()))
-print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == fact.hash().hash()))
+print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == keys.hash.hash))
+print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == fact.hash.hash))

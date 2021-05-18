@@ -1,10 +1,10 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, Text, bconcat
+from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
-from rlp.sedes import List
+from rlp.sedes import List, text
 
 
 class TransfersItem(rlp.Serializable):
@@ -32,7 +32,7 @@ class TransfersItem(rlp.Serializable):
 class TransfersFactBody(OperationFactBody):
     fields = (
         ('h', Hint),
-        ('token', Text),
+        ('token', text),
         ('sender', Address),
         ('items', List((TransfersItem, ), False)),
     )
@@ -45,7 +45,7 @@ class TransfersFactBody(OperationFactBody):
         for i in items:
             bitems += bytearray(i.to_bytes())
 
-        btoken = d['token'].to_bytes()
+        btoken = d['token'].encode()
         bsender = d['sender'].to_bytes()
         bitems = bytes(bitems)
 
@@ -76,7 +76,7 @@ class TransfersBody(OperationBody):
 
     def to_bytes(self):
         d = self.as_dict()
-        bfact_hs = d['fact'].hash().digest()
+        bfact_hs = d['fact'].hash.digest
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']

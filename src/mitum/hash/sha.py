@@ -10,7 +10,7 @@ def sha256(b):
 
     log.rlog(
         '', log.LOG_SHA256, b,
-        str(base58.b58encode(digest))
+        str(base58.b58encode(digest)),
     )
     
     return Hash(digest)

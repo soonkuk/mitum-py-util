@@ -8,18 +8,6 @@ from rlp.sedes import big_endian_int, binary, text
 import mitum.log as log
 
 
-class Text(rlp.Serializable):
-    fields = (
-        ('content', text),
-    )
-
-    def content(self):
-        return self.as_dict()['content']
-
-    def to_bytes(self):
-        return self.as_dict()['content'].encode()
-
-
 class Int(rlp.Serializable):
     fields = (
         ('int', big_endian_int),
@@ -66,9 +54,11 @@ class Hash(rlp.Serializable):
         ('hs', binary),
     )
 
+    @property
     def digest(self):
         return self.as_dict()['hs']
 
+    @property
     def hash(self):
         return base58.b58encode(self.as_dict()['hs']).decode()
 
