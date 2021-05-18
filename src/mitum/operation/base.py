@@ -70,7 +70,7 @@ class FactSign(rlp.Serializable):
         d = self.as_dict()
         bsigner = d['signer'].hinted.encode()
         bsign = d['sign']
-        btime = d['t'].encode()
+        btime = parseISOtoUTC(d['t']).encode()
 
         return bconcat(bsigner, bsign, btime)
 
