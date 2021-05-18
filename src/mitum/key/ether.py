@@ -1,12 +1,10 @@
-from mitum.common import Hint
-from mitum.hash import sha
-from mitum.constant import VERSION
-from mitum.hint import ETHER_PBLCKEY, ETHER_PRIVKEY
-from mitum.key.base import KeyPair, BaseKey, to_basekey
+import base64
 
 import ecdsa
+from mitum.hash import sha
+from mitum.hint import ETHER_PBLCKEY, ETHER_PRIVKEY
+from mitum.key.base import BaseKey, KeyPair, to_basekey
 
-import base64
 
 class ETHKeyPair(KeyPair):
     fields = (
@@ -29,10 +27,10 @@ def new_ether_keypair():
         to_basekey(ETHER_PRIVKEY, sk.to_string().decode()),
         to_basekey(ETHER_PBLCKEY, vk.to_string().decode()))
 
-def to_ether_keypair(k):
-    sk = ecdsa.SigningKey.from_string(k)
-    vk = sk.get_verifying_key()
+def to_ether_keypair(priv, pub):
+    pass
+    # sk = ecdsa.SigningKey.from_string(priv)
     
-    return ETHKeyPair(
-        to_basekey(ETHER_PRIVKEY, sk.to_string().decode()),
-        to_basekey(ETHER_PBLCKEY, vk.to_string().decode()))
+    # return ETHKeyPair(
+    #     to_basekey(ETHER_PRIVKEY, sk.to_string().decode()),
+    #     to_basekey(ETHER_PBLCKEY, vk.to_string().decode()))

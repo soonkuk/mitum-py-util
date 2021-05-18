@@ -24,12 +24,11 @@ class KeyUpdaterFactBody(OperationFactBody):
         bkeys = d['ks'].to_bytes()
         bcid = d['cid'].encode()
       
-        log.rlog('KeyUpdaterFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, btarget, bkeys, bcid)
 
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
     
 
 class KeyUpdaterFact(OperationFact):
@@ -62,11 +61,10 @@ class KeyUpdaterBody(OperationBody):
             bfact_sg += bytearray(sg.to_bytes())
         bfact_sg = bytes(bfact_sg)
 
-        log.rlog('KeyUpdaterBody', log.LOG_TO_BYTES, '')
         return bconcat(bfact_hs, bfact_sg, bmemo)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class KeyUpdater(Operation):

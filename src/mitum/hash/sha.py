@@ -6,28 +6,11 @@ from mitum.common import Hash
 
 
 def sha256(b):
-    digest = sum256(b)
-
-    log.rlog(
-        '', log.LOG_SHA256, b,
-        str(base58.b58encode(digest)),
-    )
-    
-    return Hash(digest)
-
-def dsha256(b):
-    single_digest = sum256(b)
-    double_digest = sum256(single_digest)
-    
-    log.rlog(
-        '', log.LOG_DSHA256, b, 
-        str(base58.b58encode(single_digest)),
-        str(base58.b58encode(double_digest))
-    )
-    
-    return Hash(double_digest)
+    sha2 = hashlib.sha256()
+    sha2.update(b)
+    return Hash(sha2.digest())
 
 def sum256(b):
     sha3 = hashlib.sha3_256()
     sha3.update(b)
-    return sha3.digest()
+    return Hash(sha3.digest())

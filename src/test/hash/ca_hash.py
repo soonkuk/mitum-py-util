@@ -1,11 +1,14 @@
+import base58
+import mitum.hint as HINT
 from mitum.common import Hint, Int
 from mitum.constant import VERSION
-import mitum.hint as HINT
 from mitum.key.base import BaseKey, Key, Keys, KeysBody
-from mitum.operation.base import Address, Amount, FactSign, Memo, Operation, OperationBody
-from mitum.operation.create_accounts import CreateAccounts, CreateAccountsBody, CreateAccountsFact, CreateAccountsFactBody, CreateAccountsItem
-
-import base64, base58
+from mitum.operation.base import (Address, Amount, FactSign, Memo)
+from mitum.operation.create_accounts import (CreateAccounts,
+                                             CreateAccountsBody,
+                                             CreateAccountsFact,
+                                             CreateAccountsFactBody,
+                                             CreateAccountsItem)
 
 EXPECTED_KEYS_HASH = "5terLZQX4fTPpjmBsjPjvwBLMY78qRWhKZ6j1kEiDNeV"
 EXPECTED_FACT_HASH = "3fUbmP26sMkqED7qAiBau5ZdEyUrscf6sZWJmxayeqN4"
@@ -67,9 +70,7 @@ fact_sign = FactSign(
     Hint(HINT.BASE_FACT_SIGN, VERSION),
     Address(Hint(HINT.BTC_PBLCKEY, VERSION), "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"),
     base58.b58decode(SIGNATURE.encode()),
-    # SIGNATURE,
-    # SIGNATURE.encode(),
-    "2021-05-18T03:13:36.000344Z",
+    "2021-05-18 02:02:16.067 +0000 UTC",
 )
 
 memo = Memo("")
@@ -89,4 +90,6 @@ op = CreateAccounts(
     op_body,
 )
 
-print(op.hash.hash)
+print("[CHECK] Keys Hash: " + str(EXPECTED_KEYS_HASH == keys.hash.hash))
+print("[CHECK] Fact Hash: " + str(EXPECTED_FACT_HASH == fact.hash.hash))
+print("[CHECK] Operation Hash: " + str(EXPECTED_OP_HASH == op.hash.hash))

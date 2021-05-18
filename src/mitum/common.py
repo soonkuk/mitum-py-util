@@ -44,6 +44,10 @@ class Hint(rlp.Serializable):
     )
     
     @property
+    def type(self):
+        return self.as_dict()['h_type']
+
+    @property
     def hint(self):
         d = self.as_dict()
         return d['h_type'] + ":" + d['h_ver']
@@ -66,10 +70,12 @@ class Hash(rlp.Serializable):
 def iso8601TimeStamp():
     return str(datetime.datetime.now(tz=pytz.utc).isoformat())
 
-
 def getNewToken():
     return iso8601TimeStamp()
 
+def parseISOtoUTC(t):
+    date, at, z = t[:10], t[11:23], t[26:29] + t[30:]
+    return date + " " + at + " " + z + " " + "UTC"
 
 def bconcat(*blist):
     concated = bytearray()
@@ -77,5 +83,9 @@ def bconcat(*blist):
     for i in blist:
         concated += bytearray(i)
     
-    log.rlog('', log.LOG_BCONCAT, blist, concated, list(concated))
     return bytes(concated)
+
+def parseAddress(addr):
+    idx = addr.index('-')
+    type = addr[idx+1:idx+5]
+    return type, addr[:idx]

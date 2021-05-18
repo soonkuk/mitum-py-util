@@ -1,7 +1,14 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, Int, bconcat
-from rlp.sedes import List, text,binary
+from mitum.common import (Hash, Hint, Int, bconcat, iso8601TimeStamp,
+                          parseAddress, parseISOtoUTC)
+from mitum.constant import NETWORK_ID, VERSION
+from mitum.hint import (BASE_FACT_SIGN, BTC_PBLCKEY, ETHER_PBLCKEY,
+                        STELLAR_PBLCKEY)
+from mitum.key.btc import to_btc_keypair
+from mitum.key.ether import to_ether_keypair
+from mitum.key.stellar import to_stellar_keypair
+from rlp.sedes import List, binary, text
 
 
 class Memo(rlp.Serializable):
@@ -29,7 +36,6 @@ class Amount(rlp.Serializable):
         bbig = d['big'].tight_bytes()
         bcid = d['cid'].encode()
 
-        log.rlog('Amount', log.LOG_TO_BYTES, '')
         return bconcat(bbig, bcid)
 
 
@@ -63,7 +69,6 @@ class FactSign(rlp.Serializable):
     def to_bytes(self):
         d = self.as_dict()
         bsigner = d['signer'].hinted.encode()
-        # bsign = d['sign'].encode()
         bsign = d['sign']
         btime = d['t'].encode()
 
@@ -92,6 +97,33 @@ class OperationFact(rlp.Serializable):
     @property
     def hash(self):
         return self.as_dict()['hs']
+
+    def newFactSign(self, priv, pub):
+        stype, saddr = parseAddress(priv)
+        sk = Address(Hint(stype, VERSION), saddr)
+
+        vtype, vaddr = parseAddress(pub)
+        vk = Address(Hint(vtype, VERSION), vaddr)
+        
+        signature = None
+
+        b = bconcat(self.hash.digest, NETWORK_ID.encode())
+        if vk.hint.type == BTC_PBLCKEY:
+            kp = to_btc_keypair(saddr, vaddr)
+            signature = kp.sign(b)
+        elif vk.hint.type == ETHER_PBLCKEY:
+            kp = to_ether_keypair(saddr, vaddr)
+            signature = kp.sign(b)
+        elif vk.hint.type == STELLAR_PBLCKEY:
+            kp = to_stellar_keypair(saddr, vaddr)
+            signature = kp.sign(bconcat(b))
+
+        return FactSign(
+            Hint(BASE_FACT_SIGN, VERSION),
+            vk,
+            signature,
+            iso8601TimeStamp(),
+        )
 
 
 class OperationBody(rlp.Serializable):

@@ -1,6 +1,6 @@
 # method constants
+LOG_SUM256 = 'sum256'
 LOG_SHA256 = 'sha256'
-LOG_DSHA256 = 'dsha256'
 LOG_BCONCAT = 'bconcat'
 LOG_TO_BYTES = 'to_bytes'
 
@@ -8,7 +8,6 @@ LOG_TO_BYTES = 'to_bytes'
 def clog(caller, func, msg):
     if func == LOG_SHA256:
         print('[CALL] ' + func + '(' + str(msg) + ')')
-        return
     elif func == LOG_BCONCAT:
         print('[CALL] ' + func + ': '+ str(msg))
     elif func == LOG_TO_BYTES:

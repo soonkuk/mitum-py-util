@@ -10,8 +10,6 @@ from mitum.operation.create_accounts import (CreateAccountsFact,
 EXPECTED_KEYS_HASH = "4UM4CN8MZNyv26TK84486CX5X8bu9EUYbsWz5ovRsp1M"
 EXPECTED_FACT_HASH = "7QR9ffV19CHuYypAzmQfBnpB3HMLkdvcwzhj3MSEZwH7"
 
-print()
-
 k = "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"
 
 single_key = Key(

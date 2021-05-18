@@ -1,8 +1,14 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, bconcat
+from mitum.common import Hash, Hint, bconcat, iso8601TimeStamp, parseAddress
+from mitum.constant import NETWORK_ID, VERSION
 from mitum.hash import sha
+from mitum.hint import (BASE_FACT_SIGN, BTC_PBLCKEY, ETHER_PBLCKEY,
+                        STELLAR_PBLCKEY)
 from mitum.key.base import Keys
+from mitum.key.btc import to_btc_keypair
+from mitum.key.ether import to_ether_keypair
+from mitum.key.stellar import to_stellar_keypair
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
 from rlp.sedes import List, text
@@ -26,7 +32,6 @@ class CreateAccountsItem(rlp.Serializable):
         bkeys = d['ks'].to_bytes()
         bamounts = bytes(bamounts)
 
-        log.rlog('CreateAccountsItem', log.LOG_TO_BYTES, '')
         return bconcat(bkeys, bamounts)
 
 
@@ -50,11 +55,10 @@ class CreateAccountsFactBody(OperationFactBody):
         bsender = d['sender'].hinted.encode()
         bitems = bytes(bitems)
 
-        log.rlog('CreateAccountsFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, bsender, bitems)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class CreateAccountsFact(OperationFact):
@@ -66,6 +70,33 @@ class CreateAccountsFact(OperationFact):
     @property
     def hash(self):
         return self.as_dict()['hs']
+
+    def newFactSign(self, priv, pub):
+        stype, saddr = parseAddress(priv)
+        sk = Address(Hint(stype, VERSION), saddr)
+
+        vtype, vaddr = parseAddress(pub)
+        vk = Address(Hint(vtype, VERSION), vaddr)
+        
+        signature = None
+
+        b = bconcat(self.hash.digest, NETWORK_ID.encode())
+        if vtype == BTC_PBLCKEY:
+            kp = to_btc_keypair(saddr, vaddr)
+            signature = kp.sign(b)
+        elif vtype == ETHER_PBLCKEY:
+            kp = to_ether_keypair(saddr, vaddr)
+            signature = kp.sign(b)
+        elif vtype == STELLAR_PBLCKEY:
+            kp = to_stellar_keypair(saddr, vaddr)
+            signature = kp.sign(bconcat(b))
+
+        return FactSign(
+            Hint(BASE_FACT_SIGN, VERSION),
+            vk,
+            signature,
+            iso8601TimeStamp(),
+        )
 
 
 class CreateAccountsBody(OperationBody):
@@ -88,11 +119,10 @@ class CreateAccountsBody(OperationBody):
             bfact_sg += bytearray(sg.to_bytes())
         bfact_sg = bytes(bfact_sg)
 
-        log.rlog('CreateAccountsBody', log.LOG_TO_BYTES, '')
         return bconcat(bfact_hs, bfact_sg, bmemo)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class CreateAccounts(Operation):

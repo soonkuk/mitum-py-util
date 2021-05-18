@@ -25,7 +25,6 @@ class TransfersItem(rlp.Serializable):
         breceiver = d['receiver'].to_bytes()
         bamounts = bytes(bamounts)
         
-        log.rlog('TransfersItem', log.LOG_TO_BYTES, '')
         return bconcat(breceiver, bamounts)
 
 
@@ -49,11 +48,10 @@ class TransfersFactBody(OperationFactBody):
         bsender = d['sender'].to_bytes()
         bitems = bytes(bitems)
 
-        log.rlog('TransfersFactBody', log.LOG_TO_BYTES, '')
         return bconcat(btoken, bsender, bitems)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class TransfersFact(OperationFact):
@@ -85,11 +83,10 @@ class TransfersBody(OperationBody):
             bfact_sg += bytearray(sg.to_bytes())
         bfact_sg = bytes(bfact_sg)
 
-        log.rlog('TransfersBody', log.LOG_TO_BYTES, '')
         return bconcat(bfact_hs, bfact_sg, bmemo)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class Transfers(Operation):

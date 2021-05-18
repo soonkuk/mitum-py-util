@@ -39,7 +39,6 @@ class Key(rlp.Serializable):
         bkey = d['k'].hinted.encode()
         bweight = self.as_dict()['w'].to_bytes()
 
-        log.rlog('Key', log.LOG_TO_BYTES, '')
         return bconcat(bkey, bweight)
 
 
@@ -64,11 +63,10 @@ class KeysBody(rlp.Serializable):
         bkeys = bytes(bkeys)
         bthreshold = d['threshold'].to_bytes()
 
-        log.rlog('KeysBody', log.LOG_TO_BYTES, '')
         return bconcat(bkeys, bthreshold)
 
     def generate_hash(self):
-        return sha.sha256(self.to_bytes())
+        return sha.sum256(self.to_bytes())
 
 
 class Keys(rlp.Serializable):
