@@ -1,7 +1,8 @@
-import base64
-
-import ecdsa
-from mitum.hash import sha
+from mitum.common import Int
+import base58, base64
+import mitum.hash.sha as sha
+from eth_keys import keys
+from eth_account import Account, messages
 from mitum.hint import ETHER_PBLCKEY, ETHER_PRIVKEY
 from mitum.key.base import BaseKey, KeyPair, to_basekey
 
@@ -13,24 +14,25 @@ class ETHKeyPair(KeyPair):
     )
 
     def sign(self, b):
-        pk = self.as_dict()['privkey'].key
-        sk = ecdsa.SigningKey.from_string(pk)
+        pk = keys.PrivateKey(bytes(bytearray.fromhex(self.as_dict()['privkey'].key)))
 
-        return base64.b64encode(sk.sign(sha.sha256(b))).decode()
+        b = sha.sha256(b).digest
 
+        signed = pk.sign_msg_hash(b)
+        r, s = Int(signed.r), Int(signed.s)
 
-def new_ether_keypair():
-    sk = ecdsa.SigningKey.generate()
-    vk = sk.get_verifying_key()
-    
-    return ETHKeyPair(
-        to_basekey(ETHER_PRIVKEY, sk.to_string().decode()),
-        to_basekey(ETHER_PBLCKEY, vk.to_string().decode()))
+        rlen = Int(len(r.tight_bytes()))
+        brlen = rlen.little4_to_bytes()
+
+        signature = bytes(
+            bytearray(brlen) + bytearray(r.tight_bytes()) + bytearray(s.tight_bytes())
+        )
+
+        return base58.b58encode(signature).decode()
+
 
 def to_ether_keypair(priv, pub):
-    pass
-    # sk = ecdsa.SigningKey.from_string(priv)
-    
-    # return ETHKeyPair(
-    #     to_basekey(ETHER_PRIVKEY, sk.to_string().decode()),
-    #     to_basekey(ETHER_PBLCKEY, vk.to_string().decode()))
+    return ETHKeyPair(
+        to_basekey(ETHER_PRIVKEY, priv),
+        to_basekey(ETHER_PBLCKEY, pub),
+    )

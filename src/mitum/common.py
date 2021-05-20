@@ -12,6 +12,10 @@ class Int(rlp.Serializable):
     fields = (
         ('int', big_endian_int),
     )
+
+    @property
+    def value(self):
+        return self.as_dict()['int']
     
     def tight_bytes(self):
         n = abs(self.as_dict()['int'])
@@ -24,17 +28,29 @@ class Int(rlp.Serializable):
         return bytes(result[::-1])
 
     def to_bytes(self):
-        n = self.as_dict()['int']
+        n = int(self.as_dict()['int'])
         count = 0
 
         result = bytearray()
-        while (n):
+        while(n):
             result.append(n & 0xff)
             n = n >> 8
             count += 1
-        result = bytearray([0]* (8-count)) + result
 
-        return bytes(result[::-1])
+        result =  result[::-1] + bytearray([0] * (8-count))
+        return bytes(result)
+
+    def little4_to_bytes(self):
+        n = int(self.as_dict()['int'])
+        count = 0
+
+        result = bytearray()
+        while(n):
+            result.append(n & 0xff)
+            n = n >> 8
+            count += 1
+        result = result + bytearray([0] * (4-count))
+        return bytes(result)
 
 
 class Hint(rlp.Serializable):

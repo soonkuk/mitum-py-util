@@ -1,16 +1,12 @@
 import mitum.log as log
 import rlp
-from mitum.common import Hash, Hint, bconcat, iso8601TimeStamp, parseAddress
-from mitum.constant import NETWORK_ID, VERSION
+from mitum.common import Hash, Hint, bconcat
+from mitum.constant import NETWORK_ID
 from mitum.hash import sha
-from mitum.hint import (BASE_FACT_SIGN, BTC_PBLCKEY, ETHER_PBLCKEY,
-                        STELLAR_PBLCKEY)
 from mitum.key.base import Keys
-from mitum.key.btc import to_btc_keypair
-from mitum.key.ether import to_ether_keypair
-from mitum.key.stellar import to_stellar_keypair
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
+from mitum.operation.base import _newFactSign
 from rlp.sedes import List, text
 
 
@@ -72,31 +68,8 @@ class CreateAccountsFact(OperationFact):
         return self.as_dict()['hs']
 
     def newFactSign(self, priv, pub):
-        stype, saddr = parseAddress(priv)
-        sk = Address(Hint(stype, VERSION), saddr)
-
-        vtype, vaddr = parseAddress(pub)
-        vk = Address(Hint(vtype, VERSION), vaddr)
-        
-        signature = None
-
         b = bconcat(self.hash.digest, NETWORK_ID.encode())
-        if vtype == BTC_PBLCKEY:
-            kp = to_btc_keypair(saddr, vaddr)
-            signature = kp.sign(b)
-        elif vtype == ETHER_PBLCKEY:
-            kp = to_ether_keypair(saddr, vaddr)
-            signature = kp.sign(b)
-        elif vtype == STELLAR_PBLCKEY:
-            kp = to_stellar_keypair(saddr, vaddr)
-            signature = kp.sign(bconcat(b))
-
-        return FactSign(
-            Hint(BASE_FACT_SIGN, VERSION),
-            vk,
-            signature,
-            iso8601TimeStamp(),
-        )
+        return _newFactSign(b, priv, pub)
 
 
 class CreateAccountsBody(OperationBody):
@@ -110,7 +83,6 @@ class CreateAccountsBody(OperationBody):
     def to_bytes(self):
         d = self.as_dict()
         bfact_hs = d['fact'].hash.digest
-        # bfact_hs = d['fact'].hash.hash.encode()
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']

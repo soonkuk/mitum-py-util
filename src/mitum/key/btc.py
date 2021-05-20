@@ -31,13 +31,10 @@ class BTCKeyPair(KeyPair):
         return base58.b58encode(signature).decode()
 
 
-def new_btc_keypair():
-    pass
-
-def to_btc_keypair(privk, pubk):
-    wif = base58.b58encode_check(base58.b58decode_check(privk)[:-1]).decode()
+def to_btc_keypair(priv, pub):
+    wif = base58.b58encode_check(base58.b58decode_check(priv)[:-1]).decode()
  
     return BTCKeyPair(
         to_basekey(BTC_PRIVKEY, wif),
-        to_basekey(BTC_PBLCKEY, pubk)
+        to_basekey(BTC_PBLCKEY, pub)
     )

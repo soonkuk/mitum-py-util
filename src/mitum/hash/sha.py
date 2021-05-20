@@ -1,6 +1,5 @@
 import hashlib
 
-import base58
 import mitum.log as log
 from mitum.common import Hash
 

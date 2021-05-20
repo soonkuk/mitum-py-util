@@ -61,5 +61,5 @@ fact = CreateAccountsFact(
     fact_body,
 )
 
-print('[CHECK] KEYS_HASH: ' + str(EXPECTED_KEYS_HASH == keys.hash.hash))
-print('[CHECK] FACT_HASH: ' + str(EXPECTED_FACT_HASH == fact.hash.hash))
+print('[CHECK] KEYS HASH: ' + str(EXPECTED_KEYS_HASH == keys.hash.hash))
+print('[CHECK] FACT HASH: ' + str(EXPECTED_FACT_HASH == fact.hash.hash))

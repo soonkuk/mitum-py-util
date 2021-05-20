@@ -3,7 +3,7 @@ import mitum.hint as HINT
 from mitum.common import Hint, Int
 from mitum.constant import VERSION
 from mitum.key.base import BaseKey, Key, Keys, KeysBody
-from mitum.operation.base import (Address, Amount, FactSign, Memo)
+from mitum.operation.base import Address, Amount, FactSign, Memo
 from mitum.operation.create_accounts import (CreateAccounts,
                                              CreateAccountsBody,
                                              CreateAccountsFact,
@@ -70,7 +70,7 @@ fact_sign = FactSign(
     Hint(HINT.BASE_FACT_SIGN, VERSION),
     Address(Hint(HINT.BTC_PBLCKEY, VERSION), "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"),
     base58.b58decode(SIGNATURE.encode()),
-    "2021-05-18 02:02:16.067 +0000 UTC",
+    "2021-05-18T02:02:16.067000+00:00",
 )
 
 memo = Memo("")
@@ -90,6 +90,6 @@ op = CreateAccounts(
     op_body,
 )
 
-print("[CHECK] Keys Hash: " + str(EXPECTED_KEYS_HASH == keys.hash.hash))
-print("[CHECK] Fact Hash: " + str(EXPECTED_FACT_HASH == fact.hash.hash))
-print("[CHECK] Operation Hash: " + str(EXPECTED_OP_HASH == op.hash.hash))
+print("[CHECK] KEYS HASH: " + str(EXPECTED_KEYS_HASH == keys.hash.hash))
+print("[CHECK] FACT HASH: " + str(EXPECTED_FACT_HASH == fact.hash.hash))
+print("[CHECK] Operation HASH: " + str(EXPECTED_OP_HASH == op.hash.hash))

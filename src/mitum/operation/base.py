@@ -11,6 +11,33 @@ from mitum.key.stellar import to_stellar_keypair
 from rlp.sedes import List, binary, text
 
 
+def _newFactSign(b, priv, pub):
+    stype, saddr = parseAddress(priv)
+    sk = Address(Hint(stype, VERSION), saddr)
+
+    vtype, vaddr = parseAddress(pub)
+    vk = Address(Hint(vtype, VERSION), vaddr)
+        
+    signature = None
+
+    if vtype == BTC_PBLCKEY:
+        kp = to_btc_keypair(saddr, vaddr)
+        signature = kp.sign(b)
+    elif vtype == ETHER_PBLCKEY:
+        kp = to_ether_keypair(saddr, vaddr)
+        signature = kp.sign(b)
+    elif vtype == STELLAR_PBLCKEY:
+        kp = to_stellar_keypair(saddr, vaddr)
+        signature = kp.sign(bconcat(b))
+
+    return FactSign(
+        Hint(BASE_FACT_SIGN, VERSION),
+        vk,
+        signature,
+        iso8601TimeStamp(),
+    )
+
+
 class Memo(rlp.Serializable):
     fields = (
         ('m', text),
@@ -99,31 +126,8 @@ class OperationFact(rlp.Serializable):
         return self.as_dict()['hs']
 
     def newFactSign(self, priv, pub):
-        stype, saddr = parseAddress(priv)
-        sk = Address(Hint(stype, VERSION), saddr)
-
-        vtype, vaddr = parseAddress(pub)
-        vk = Address(Hint(vtype, VERSION), vaddr)
-        
-        signature = None
-
         b = bconcat(self.hash.digest, NETWORK_ID.encode())
-        if vk.hint.type == BTC_PBLCKEY:
-            kp = to_btc_keypair(saddr, vaddr)
-            signature = kp.sign(b)
-        elif vk.hint.type == ETHER_PBLCKEY:
-            kp = to_ether_keypair(saddr, vaddr)
-            signature = kp.sign(b)
-        elif vk.hint.type == STELLAR_PBLCKEY:
-            kp = to_stellar_keypair(saddr, vaddr)
-            signature = kp.sign(bconcat(b))
-
-        return FactSign(
-            Hint(BASE_FACT_SIGN, VERSION),
-            vk,
-            signature,
-            iso8601TimeStamp(),
-        )
+        return _newFactSign(b, priv, pub)
 
 
 class OperationBody(rlp.Serializable):
@@ -145,3 +149,5 @@ class Operation(rlp.Serializable):
 
     def hash(self):
         return self.as_dict()['hs']
+
+
