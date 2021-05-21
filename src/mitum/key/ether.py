@@ -1,8 +1,12 @@
-from mitum.common import Int
-import base58, base64
-import mitum.hash.sha as sha
+import codecs
+import hashlib
+
+import base58
+import ecdsa
+from ecdsa import curves
+from ecdsa.util import sigencode_der_canonize
 from eth_keys import keys
-from eth_account import Account, messages
+from mitum.common import Int, bconcat
 from mitum.hint import ETHER_PBLCKEY, ETHER_PRIVKEY
 from mitum.key.base import BaseKey, KeyPair, to_basekey
 
@@ -14,25 +18,33 @@ class ETHKeyPair(KeyPair):
     )
 
     def sign(self, b):
-        pk = keys.PrivateKey(bytes(bytearray.fromhex(self.as_dict()['privkey'].key)))
-
-        b = sha.sha256(b).digest
-
-        signed = pk.sign_msg_hash(b)
-        r, s = Int(signed.r), Int(signed.s)
-
-        rlen = Int(len(r.tight_bytes()))
-        brlen = rlen.little4_to_bytes()
-
-        signature = bytes(
-            bytearray(brlen) + bytearray(r.tight_bytes()) + bytearray(s.tight_bytes())
+        pk = self.as_dict()['privkey'].key
+        sk = ecdsa.SigningKey.from_string(
+            codecs.decode(pk, "hex"),
+            curve=curves.SECP256k1,
+            hashfunc=hashlib.sha256
         )
+
+        sig = sk.sign(b, hashfunc=hashlib.sha256, sigencode=sigencode_der_canonize)
+
+        rlen = Int(int(sig[3]))
+        r = sig[4:4+rlen.value]
+        s = sig[6+rlen.value:]
+
+        signature = bconcat(rlen.little4_to_bytes(), r, s)
 
         return base58.b58encode(signature).decode()
 
+    @property
+    def public_key(self):
+        return self.as_dict()['pubkey']
 
-def to_ether_keypair(priv, pub):
+
+def to_ether_keypair(priv):
+    pk = keys.PrivateKey(codecs.decode(priv, "hex"))
+    pubk = pk.public_key.to_hex()[0] + '4' + pk.public_key.to_hex()[2:]
+
     return ETHKeyPair(
         to_basekey(ETHER_PRIVKEY, priv),
-        to_basekey(ETHER_PBLCKEY, pub),
+        to_basekey(ETHER_PBLCKEY, pubk),
     )

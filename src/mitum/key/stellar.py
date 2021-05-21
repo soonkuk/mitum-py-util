@@ -15,6 +15,10 @@ class StellarKeyPair(KeyPair):
 
         return base58.b58encode(kp.sign(b)).decode()
 
+    @property
+    def public_key(self):
+        return self.as_dict()['pubkey']
+
 
 def new_stellar_keypair():
     kp = stellar.Keypair.random()
@@ -23,9 +27,11 @@ def new_stellar_keypair():
         to_basekey(STELLAR_PRIVKEY, kp.secret),
         to_basekey(STELLAR_PBLCKEY, kp.public_key))
 
-def to_stellar_keypair(priv, pub):
+
+def to_stellar_keypair(priv):
     kp = stellar.Keypair.from_secret(priv)
-    
+    pubk = kp.public_key
+
     return StellarKeyPair(
         to_basekey(STELLAR_PRIVKEY, kp.secret),
-        to_basekey(STELLAR_PBLCKEY, pub))
+        to_basekey(STELLAR_PBLCKEY, pubk))

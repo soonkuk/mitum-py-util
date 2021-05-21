@@ -5,8 +5,6 @@ import pytz
 import rlp
 from rlp.sedes import big_endian_int, binary, text
 
-import mitum.log as log
-
 
 class Int(rlp.Serializable):
     fields = (
@@ -87,7 +85,9 @@ def iso8601TimeStamp():
     return str(datetime.datetime.now(tz=pytz.utc).isoformat())
 
 def getNewToken():
-    return iso8601TimeStamp()
+    token = iso8601TimeStamp()
+    token = token[:26] + 'Z'
+    return token
 
 def parseISOtoUTC(t):
     date, at, z = t[:10], t[11:23], t[26:29] + t[30:]

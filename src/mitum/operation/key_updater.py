@@ -1,6 +1,4 @@
-import mitum.log as log
 from mitum.common import Hash, Hint, bconcat
-from mitum.constant import NETWORK_ID
 from mitum.hash import sha
 from mitum.key.base import Keys
 from mitum.operation import (Address, FactSign, Memo, Operation, OperationBody,
@@ -43,9 +41,9 @@ class KeyUpdaterFact(OperationFact):
     def hash(self):
         return self.as_dict(self)['hs']
         
-    def newFactSign(self, priv, pub):
-        b = bconcat(self.hash.digest, NETWORK_ID.encode())
-        return _newFactSign(b, priv, pub)
+    def newFactSign(self, net_id, priv):
+        b = bconcat(self.hash.digest, net_id.encode())
+        return _newFactSign(b, priv)
 
 
 class KeyUpdaterBody(OperationBody):
@@ -82,3 +80,6 @@ class KeyUpdater(Operation):
     @property
     def hash(self):
         return self.as_dict()['hs']
+
+    def to_dict(self):
+        pass

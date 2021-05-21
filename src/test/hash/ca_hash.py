@@ -10,6 +10,7 @@ from mitum.operation.create_accounts import (CreateAccounts,
                                              CreateAccountsFactBody,
                                              CreateAccountsItem)
 
+
 EXPECTED_KEYS_HASH = "5terLZQX4fTPpjmBsjPjvwBLMY78qRWhKZ6j1kEiDNeV"
 EXPECTED_FACT_HASH = "3fUbmP26sMkqED7qAiBau5ZdEyUrscf6sZWJmxayeqN4"
 EXPECTED_OP_HASH = "2RaYS4AkX9fnzFUoEdYSVgQNpcCmwwC2WKidfX5FiWmY"
@@ -68,7 +69,7 @@ fact = CreateAccountsFact(
 
 fact_sign = FactSign(
     Hint(HINT.BASE_FACT_SIGN, VERSION),
-    Address(Hint(HINT.BTC_PBLCKEY, VERSION), "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"),
+    BaseKey(Hint(HINT.BTC_PBLCKEY, VERSION), "rd89GxTnMP91bZ1VepbkBrvB77BSQyQbquEVBy2fN1tV"),
     base58.b58decode(SIGNATURE.encode()),
     "2021-05-18T02:02:16.067000+00:00",
 )
@@ -90,6 +91,22 @@ op = CreateAccounts(
     op_body,
 )
 
-print("[CHECK] KEYS HASH: " + str(EXPECTED_KEYS_HASH == keys.hash.hash))
-print("[CHECK] FACT HASH: " + str(EXPECTED_FACT_HASH == fact.hash.hash))
-print("[CHECK] Operation HASH: " + str(EXPECTED_OP_HASH == op.hash.hash))
+_keys_hash = EXPECTED_KEYS_HASH == keys.hash.hash
+_fact_hash = EXPECTED_FACT_HASH == fact.hash.hash
+_op_hash = EXPECTED_OP_HASH == op.hash.hash
+
+print("[CHECK] KEYS HASH: " + str(_keys_hash))
+if not _keys_hash:
+    print("RESULT: " + keys.hash.hash)
+    print("EXPECTED: " + EXPECTED_KEYS_HASH)
+    print()
+
+print("[CHECK] FACT HASH: " + str(_fact_hash))
+if not _fact_hash:
+    print("RESULT: " + fact.hash.hash)
+    print("EXPECTED: " + EXPECTED_FACT_HASH)
+
+print("[CHECK] Operation HASH: " + str(_op_hash))
+if not _op_hash:
+    print("RESULT: " + op.hash.hash)
+    print("EXPECTED: " + EXPECTED_OP_HASH)

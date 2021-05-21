@@ -1,34 +1,32 @@
-import mitum.log as log
 import rlp
 from mitum.common import (Hash, Hint, Int, bconcat, iso8601TimeStamp,
                           parseAddress, parseISOtoUTC)
-from mitum.constant import NETWORK_ID, VERSION
-from mitum.hint import (BASE_FACT_SIGN, BTC_PBLCKEY, ETHER_PBLCKEY,
-                        STELLAR_PBLCKEY)
+from mitum.constant import VERSION
+from mitum.hint import (BASE_FACT_SIGN, BTC_PRIVKEY, ETHER_PRIVKEY,
+                        STELLAR_PRIVKEY)
+from mitum.key.base import BaseKey
 from mitum.key.btc import to_btc_keypair
 from mitum.key.ether import to_ether_keypair
 from mitum.key.stellar import to_stellar_keypair
 from rlp.sedes import List, binary, text
 
 
-def _newFactSign(b, priv, pub):
-    stype, saddr = parseAddress(priv)
-    sk = Address(Hint(stype, VERSION), saddr)
-
-    vtype, vaddr = parseAddress(pub)
-    vk = Address(Hint(vtype, VERSION), vaddr)
+def _newFactSign(b, hinted_priv):
+    stype, saddr = parseAddress(hinted_priv)
         
     signature = None
 
-    if vtype == BTC_PBLCKEY:
-        kp = to_btc_keypair(saddr, vaddr)
+    if stype == BTC_PRIVKEY:
+        kp = to_btc_keypair(saddr)
         signature = kp.sign(b)
-    elif vtype == ETHER_PBLCKEY:
-        kp = to_ether_keypair(saddr, vaddr)
+    elif stype == ETHER_PRIVKEY:
+        kp = to_ether_keypair(saddr)
         signature = kp.sign(b)
-    elif vtype == STELLAR_PBLCKEY:
-        kp = to_stellar_keypair(saddr, vaddr)
+    elif stype == STELLAR_PRIVKEY:
+        kp = to_stellar_keypair(saddr)
         signature = kp.sign(bconcat(b))
+
+    vk = kp.public_key
 
     return FactSign(
         Hint(BASE_FACT_SIGN, VERSION),
@@ -88,7 +86,7 @@ class Address(rlp.Serializable):
 class FactSign(rlp.Serializable):
     fields = (
             ('h', Hint),
-            ('signer', Address),
+            ('signer', BaseKey),
             ('sign', binary),
             ('t', text),
         )
@@ -100,6 +98,9 @@ class FactSign(rlp.Serializable):
         btime = parseISOtoUTC(d['t']).encode()
 
         return bconcat(bsigner, bsign, btime)
+
+    def signed_at(self):
+       return self.as_dict()['t'][:26] + 'Z'
 
 
 class OperationFactBody(rlp.Serializable):
@@ -125,9 +126,9 @@ class OperationFact(rlp.Serializable):
     def hash(self):
         return self.as_dict()['hs']
 
-    def newFactSign(self, priv, pub):
-        b = bconcat(self.hash.digest, NETWORK_ID.encode())
-        return _newFactSign(b, priv, pub)
+    def newFactSign(self, net_id, hinted_priv):
+        b = bconcat(self.hash.digest, net_id.encode())
+        return _newFactSign(b, hinted_priv)
 
 
 class OperationBody(rlp.Serializable):

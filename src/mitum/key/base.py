@@ -1,4 +1,3 @@
-import mitum.log as log
 import rlp
 from mitum.common import Hash, Hint, Int, bconcat
 from mitum.constant import VERSION
@@ -11,6 +10,10 @@ class BaseKey(rlp.Serializable):
         ('h', Hint),
         ('k', text),
     )
+
+    @property
+    def hint(self):
+        return self.as_dict()['h']
 
     @property
     def key(self):

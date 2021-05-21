@@ -1,7 +1,5 @@
-import mitum.log as log
 import rlp
 from mitum.common import Hash, Hint, bconcat
-from mitum.constant import NETWORK_ID
 from mitum.hash import sha
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
@@ -66,9 +64,9 @@ class TransfersFact(OperationFact):
     def hash(self):
         return self.as_dict()['hs']
 
-    def newFactSign(self, priv, pub):
-        b = bconcat(self.hash.digest, NETWORK_ID.encode())
-        return _newFactSign(b, priv, pub)
+    def newFactSign(self, net_id, priv):
+        b = bconcat(self.hash.digest, net_id.encode())
+        return _newFactSign(b, priv)
 
 
 class TransfersBody(OperationBody):
@@ -106,3 +104,5 @@ class Transfers(Operation):
     def hash(self):
         return self.as_dict()['hs']
 
+    def to_dict(self):
+        pass

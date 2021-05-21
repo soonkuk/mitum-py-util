@@ -1,7 +1,7 @@
 from mitum.common import Hint, Int
-from mitum.key.base import Key, Keys, KeysBody, to_basekey
-from mitum.hint import *
 from mitum.constant import VERSION
+from mitum.hint import *
+from mitum.key.base import Key, Keys, KeysBody, to_basekey
 
 
 EXPECTED_KEYS_HASH = "HhgmNZQvabSfGSyKmXqQfTSJimjPTxsQ31B4Wd1UzFD5"
@@ -31,6 +31,21 @@ keys = Keys(
     keys_body,
 )
 
-print("[CHECK] KEYS HASH: " + str(keys.hash.hash == EXPECTED_KEYS_HASH))
+_keys_hash = keys.hash.hash == EXPECTED_KEYS_HASH
+_fact_hash = False
+_op_hash = False
+
+
+print("[CHECK] KEYS HASH: " + str(_keys_hash))
+if not _keys_hash:
+    print("RESULT: " + keys.hash.hash)
+    print("EXPECTED: " + EXPECTED_KEYS_HASH)
+    print()
+
 print("[CHECK] FACT HASH: ")
+if not _fact_hash:
+    pass
+
 print("[CHECK] Operation HASH:" )
+if not _op_hash:
+    pass
