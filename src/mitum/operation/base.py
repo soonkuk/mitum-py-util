@@ -1,3 +1,4 @@
+import base58
 import rlp
 from mitum.common import (Hash, Hint, Int, bconcat, iso8601TimeStamp,
                           parseAddress, parseISOtoUTC)
@@ -63,6 +64,14 @@ class Amount(rlp.Serializable):
 
         return bconcat(bbig, bcid)
 
+    def to_dict(self):
+        d = self.as_dict()
+        amount = {}
+        amount['_hint'] = d['h'].hint
+        amount['amount'] = str(d['big'].value)
+        amount['currency'] = d['cid']
+        return amount
+
 
 class Address(rlp.Serializable):
     fields = (
@@ -70,11 +79,9 @@ class Address(rlp.Serializable):
         ('addr', text),
     )
 
-    @property
     def hint(self):
         return self.as_dict()['h'].hint
 
-    @property
     def hinted(self):
         d = self.as_dict()
         return d['addr'] + '-' + d['h'].hint
@@ -93,7 +100,7 @@ class FactSign(rlp.Serializable):
 
     def to_bytes(self):
         d = self.as_dict()
-        bsigner = d['signer'].hinted.encode()
+        bsigner = d['signer'].hinted().encode()
         bsign = d['sign']
         btime = parseISOtoUTC(d['t']).encode()
 
@@ -101,6 +108,15 @@ class FactSign(rlp.Serializable):
 
     def signed_at(self):
        return self.as_dict()['t'][:26] + 'Z'
+
+    def to_dict(self):
+        d = self.as_dict()
+        fact_sign = {}
+        fact_sign['_hint'] = d['h'].hint
+        fact_sign['signer'] = d['signer'].hinted()
+        fact_sign['signautre'] = base58.b58encode(d['sign']).decode()
+        fact_sign['signed_at'] = self.signed_at()
+        return fact_sign
 
 
 class OperationFactBody(rlp.Serializable):
@@ -122,13 +138,15 @@ class OperationFact(rlp.Serializable):
         ('body', OperationFactBody),
     )
 
-    @property
     def hash(self):
         return self.as_dict()['hs']
 
     def newFactSign(self, net_id, hinted_priv):
-        b = bconcat(self.hash.digest, net_id.encode())
+        b = bconcat(self.hash().digest, net_id.encode())
         return _newFactSign(b, hinted_priv)
+    
+    def to_dict(self):
+        pass
 
 
 class OperationBody(rlp.Serializable):
@@ -151,4 +169,5 @@ class Operation(rlp.Serializable):
     def hash(self):
         return self.as_dict()['hs']
 
-
+    def to_dict(self):
+        pass

@@ -33,7 +33,7 @@ class ETHKeyPair(KeyPair):
 
         signature = bconcat(rlen.little4_to_bytes(), r, s)
 
-        return base58.b58encode(signature).decode()
+        return signature
 
     @property
     def public_key(self):

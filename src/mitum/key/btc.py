@@ -30,7 +30,7 @@ class BTCKeyPair(KeyPair):
         
         signature = sk.sign(hs, hashfunc=hashlib.sha256, sigencode=sigencode_der_canonize)
         
-        return base58.b58encode(signature).decode()
+        return signature
 
     @property
     def public_key(self):

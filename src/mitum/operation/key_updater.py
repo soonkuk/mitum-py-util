@@ -1,3 +1,4 @@
+import json
 from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
 from mitum.key.base import Keys
@@ -17,10 +18,10 @@ class KeyUpdaterFactBody(OperationFactBody):
     )
     
     def to_bytes(self):
-        d = self.as_dict(self)
+        d = self.as_dict()
 
         btoken = d['token'].encode()
-        btarget = d['target'].hinted.encode()
+        btarget = d['target'].hinted().encode()
         bkeys = d['ks'].to_bytes()
         bcid = d['cid'].encode()
       
@@ -37,13 +38,23 @@ class KeyUpdaterFact(OperationFact):
         ('body', KeyUpdaterFactBody),
     )
 
-    @property
     def hash(self):
-        return self.as_dict(self)['hs']
+        return self.as_dict()['hs']
         
     def newFactSign(self, net_id, priv):
-        b = bconcat(self.hash.digest, net_id.encode())
+        b = bconcat(self.hash().digest, net_id.encode())
         return _newFactSign(b, priv)
+
+    def to_dict(self):
+        d = self.as_dict()['body'].as_dict()
+        fact = {}
+        fact['_hint'] = d['h'].hint
+        fact['hash'] = self.hash().hash
+        fact['token'] = d['token']
+        fact['target'] = d['target'].hinted()
+        fact['keys'] = d['ks'].to_dict()
+        fact['currency'] = d['cid']
+        return fact
 
 
 class KeyUpdaterBody(OperationBody):
@@ -56,7 +67,7 @@ class KeyUpdaterBody(OperationBody):
 
     def to_bytes(self):
         d = self.as_dict()
-        bfact_hs = d['fact'].hash.digest
+        bfact_hs = d['fact'].hash().digest
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']
@@ -77,9 +88,24 @@ class KeyUpdater(Operation):
         ('body', KeyUpdaterBody),
     )
 
-    @property
     def hash(self):
         return self.as_dict()['hs']
 
     def to_dict(self):
-        pass
+        d = self.as_dict()['body'].as_dict()
+        oper = {}
+        oper['memo'] = d['memo'].memo
+        oper['hint'] = d['h'].hint
+        oper['fact'] = d['fact'].to_dict()
+
+        fact_signs = list()
+        _sgs = d['fact_sg']
+        for _sg in _sgs:
+            fact_signs.append(_sg.to_dict())
+        oper['fact_signs'] = fact_signs
+
+        return oper
+
+    def to_json(self, file_name):
+        with open(file_name, "w") as fp:
+            json.dump(self.to_dict(), fp)

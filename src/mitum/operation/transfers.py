@@ -1,3 +1,4 @@
+import json
 import rlp
 from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
@@ -26,6 +27,20 @@ class TransfersItem(rlp.Serializable):
         bamounts = bytes(bamounts)
         
         return bconcat(breceiver, bamounts)
+
+    def to_dict(self):
+        d = self.as_dict()
+        item = {}
+        item['_hint'] = d['h'].hint
+        item['receiver'] = d['receiver'].hinted()
+        
+        amounts = list()
+        _amounts = d['amounts']
+        for _amount in _amounts:
+            amounts.append(_amount.to_dict())
+        item['amounts'] = amounts
+
+        return item
 
 
 class TransfersFactBody(OperationFactBody):
@@ -60,13 +75,28 @@ class TransfersFact(OperationFact):
         ('body', TransfersFactBody),
     )
 
-    @property
     def hash(self):
         return self.as_dict()['hs']
 
     def newFactSign(self, net_id, priv):
-        b = bconcat(self.hash.digest, net_id.encode())
+        b = bconcat(self.hash().digest, net_id.encode())
         return _newFactSign(b, priv)
+
+    def to_dict(self):
+        d = self.as_dict()['body'].as_dict()
+        fact = {}
+        fact['_hint'] = d['h'].hint
+        fact['hash'] = self.hash().hash
+        fact['token'] = d['token']
+        fact['sender'] = d['sender'].hinted()
+
+        items = list()
+        _items = d['items']
+        for _item in _items:
+            items.append(_item.to_dict())
+        fact['items'] = items
+
+        return fact
 
 
 class TransfersBody(OperationBody):
@@ -79,7 +109,7 @@ class TransfersBody(OperationBody):
 
     def to_bytes(self):
         d = self.as_dict()
-        bfact_hs = d['fact'].hash.digest
+        bfact_hs = d['fact'].hash().digest
         bmemo = d['memo'].to_bytes()
 
         fact_sg = d['fact_sg']
@@ -100,9 +130,24 @@ class Transfers(Operation):
         ('body', TransfersBody),
     )
 
-    @property
     def hash(self):
         return self.as_dict()['hs']
 
     def to_dict(self):
-        pass
+        d = self.as_dict()['body'].as_dict()
+        oper = {}
+        oper['memo'] = d['memo'].memo
+        oper['hint'] = d['h'].hint
+        oper['fact'] = d['fact'].to_dict()
+
+        fact_signs = list()
+        _sgs = d['fact_sg']
+        for _sg in _sgs:
+            fact_signs.append(_sg.to_dict())
+        oper['fact_signs'] = fact_signs
+
+        return oper
+
+    def to_json(self, file_name):
+        with open(file_name, "w") as fp:
+            json.dump(self.to_dict(), fp)

@@ -13,7 +13,7 @@ class StellarKeyPair(KeyPair):
     def sign(self, b):
         kp = stellar.Keypair.from_secret(self.as_dict()['privkey'].key)
 
-        return base58.b58encode(kp.sign(b)).decode()
+        return kp.sign(b)
 
     @property
     def public_key(self):

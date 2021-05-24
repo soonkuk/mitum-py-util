@@ -11,7 +11,6 @@ class BaseKey(rlp.Serializable):
         ('k', text),
     )
 
-    @property
     def hint(self):
         return self.as_dict()['h']
 
@@ -22,7 +21,6 @@ class BaseKey(rlp.Serializable):
     def to_bytes(self):
         return self.as_dict()['k'].encode()
 
-    @property
     def hinted(self):
         return self.as_dict()['k'] + "-" + self.as_dict()['h'].hint
     
@@ -39,10 +37,18 @@ class Key(rlp.Serializable):
 
     def to_bytes(self):
         d = self.as_dict()
-        bkey = d['k'].hinted.encode()
+        bkey = d['k'].hinted().encode()
         bweight = self.as_dict()['w'].to_bytes()
 
         return bconcat(bkey, bweight)
+
+    def to_dict(self):
+        d = self.as_dict()
+        key = {}
+        key['_hint'] = d['h'].hint
+        key['weight'] = d['w'].value
+        key['key'] = d['k'].key
+        return key
 
 
 class KeysBody(rlp.Serializable):
@@ -81,9 +87,22 @@ class Keys(rlp.Serializable):
     def to_bytes(self):
         return self.as_dict()['body'].to_bytes()
 
-    @property
     def hash(self):
         return self.as_dict()['hs']
+
+    def to_dict(self):
+        d = self.as_dict()['body'].as_dict()
+        keys = {}
+        keys['_hint'] = d['h'].hint
+        keys['hash'] = self.hash().hash
+
+        _keys = d['ks']
+        ks = list()
+        for _key in _keys:
+            ks.append(_key.to_dict())
+        keys['keys'] = ks
+        keys['threshold'] = d['threshold'].value
+        return keys
 
 
 class KeyPair(rlp.Serializable):

@@ -46,7 +46,7 @@ def to_keys(ks):
     return keys
 
 
-def create_accounts(net_id, pk, sender, amt, ks):
+def generate_create_accounts(net_id, pk, sender, amt, ks):
     
     keys = to_keys(ks)
     
@@ -105,8 +105,8 @@ def create_accounts(net_id, pk, sender, amt, ks):
     return op
 
 
-def key_updater(net_id, pk, target, new_pubk, weight, cid):
-    keys = to_keys((new_pubk, weight))
+def generate_key_updater(net_id, pk, target, new_pubk, weight, cid):
+    keys = to_keys([(new_pubk, weight)])
 
     _, k_target = parseAddress(target)
 
@@ -145,7 +145,7 @@ def key_updater(net_id, pk, target, new_pubk, weight, cid):
     return op
 
 
-def transfers(net_id, pk, sender, receiver, amt):
+def generate_transfers(net_id, pk, sender, receiver, amt):
     
     big, cid = amt
     amounts = list()
