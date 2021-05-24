@@ -3,7 +3,6 @@ from mitum.common import bconcat
 from mitum.constant import NETWORK_ID
 from mitum.key.ether import to_ether_keypair
 
-
 EXPECTED_SIGNATURE = "5BpRZ6QFEXgF3KCxnMcKqTVw8hqqjkva3ddYQurXkPqWeGB8kvvpBXTYyT2ztwFvhsLP8KrR7sU6wd1fq671naeycuvKV"
 
 FACT_HASH = "CVdKhHkp1w3NCCE4FHm6kSCpaBD2stEoQSsGMtL65fsb"

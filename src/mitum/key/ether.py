@@ -1,7 +1,6 @@
 import codecs
 import hashlib
 
-import base58
 import ecdsa
 from ecdsa import curves
 from ecdsa.util import sigencode_der_canonize

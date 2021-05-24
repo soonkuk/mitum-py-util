@@ -114,7 +114,7 @@ class FactSign(rlp.Serializable):
         fact_sign = {}
         fact_sign['_hint'] = d['h'].hint
         fact_sign['signer'] = d['signer'].hinted()
-        fact_sign['signautre'] = base58.b58encode(d['sign']).decode()
+        fact_sign['signature'] = base58.b58encode(d['sign']).decode()
         fact_sign['signed_at'] = self.signed_at()
         return fact_sign
 

@@ -84,10 +84,8 @@ class Hash(rlp.Serializable):
 def iso8601TimeStamp():
     return str(datetime.datetime.now(tz=pytz.utc).isoformat())
 
-def getNewToken():
-    token = iso8601TimeStamp()
-    token = token[:26] + 'Z'
-    return token
+def getNewToken(iso):
+    return iso[:26] + 'Z'
 
 def parseISOtoUTC(t):
     date, at, z = t[:10], t[11:23], t[26:29] + t[30:]

@@ -35,8 +35,9 @@ print()
 # print("-" * 20 + "< STELLAR            Sign    Test >" + "-" * 20)
 # exec(open('./test/sign/stellar_test.py').read())
 
-exec(open('./test/json/ca_json.py').read())
-exec(open('./test/json/ku_json.py').read())
-exec(open('./test/json/tf_json.py').read())
+# exec(open('./test/json/ca_json.py').read())
+# exec(open('./test/json/ku_json.py').read())
+# exec(open('./test/json/tf_json.py').read())
+exec(open('./test/json/seal.py').read())
 
 print()

@@ -3,7 +3,6 @@ from mitum.constant import VERSION
 from mitum.hint import *
 from mitum.key.base import Key, Keys, KeysBody, to_basekey
 
-
 EXPECTED_KEYS_HASH = "HhgmNZQvabSfGSyKmXqQfTSJimjPTxsQ31B4Wd1UzFD5"
 
 k = "hayB9VYA5KREe97duDwhtqvGgbRRzL4Y42y5WwrBZADB"

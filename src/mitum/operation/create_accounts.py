@@ -1,7 +1,9 @@
+import base64
+import json
+
 import rlp
 from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
-import json
 from mitum.key.base import Keys
 from mitum.operation import (Address, Amount, FactSign, Memo, Operation,
                              OperationBody, OperationFact, OperationFactBody)
@@ -42,6 +44,7 @@ class CreateAccountsItem(rlp.Serializable):
         item['amounts'] = amounts
 
         return item
+
 
 class CreateAccountsFactBody(OperationFactBody):
     fields = (
@@ -87,7 +90,10 @@ class CreateAccountsFact(OperationFact):
         fact = {}
         fact['_hint'] = d['h'].hint
         fact['hash'] = self.hash().hash
-        fact['token'] = d['token']
+        token = d['token'].encode('ascii')
+        token = base64.b64encode(token)
+        token = token.decode('ascii')
+        fact['token'] = token
         fact['sender'] = d['sender'].hinted()
 
         _items = d['items']
@@ -136,8 +142,9 @@ class CreateAccounts(Operation):
         d = self.as_dict()['body'].as_dict()
         oper = {}
         oper['memo'] = d['memo'].memo
-        oper['hint'] = d['h'].hint
+        oper['_hint'] = d['h'].hint
         oper['fact'] = d['fact'].to_dict()
+        oper['hash'] = self.hash().hash
 
         fact_signs = list()
         _sgs = d['fact_sg']

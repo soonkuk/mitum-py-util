@@ -10,4 +10,4 @@ ac1_addr = "CHmkPR6GqTZfxrs1ptoWupsgvzkgvNdE7ZzhvimGUErg-a000:0.0.1"
 
 keyUpdater = generate_key_updater("mitum", ac0_prv, ac0_addr, ac1_pub, 100, "MCC")
 
-keyUpdater.to_json("key_updater.json")
+keyUpdater.to_json("./test/json/key_updater.json")

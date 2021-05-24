@@ -1,4 +1,6 @@
+import base64
 import json
+
 import rlp
 from mitum.common import Hash, Hint, bconcat
 from mitum.hash import sha
@@ -23,7 +25,7 @@ class TransfersItem(rlp.Serializable):
         for amount in amounts:
             bamounts += bytearray(amount.to_bytes())
 
-        breceiver = d['receiver'].to_bytes()
+        breceiver = d['receiver'].hinted().encode()
         bamounts = bytes(bamounts)
         
         return bconcat(breceiver, bamounts)
@@ -60,7 +62,7 @@ class TransfersFactBody(OperationFactBody):
             bitems += bytearray(i.to_bytes())
 
         btoken = d['token'].encode()
-        bsender = d['sender'].to_bytes()
+        bsender = d['sender'].hinted().encode()
         bitems = bytes(bitems)
 
         return bconcat(btoken, bsender, bitems)
@@ -87,7 +89,10 @@ class TransfersFact(OperationFact):
         fact = {}
         fact['_hint'] = d['h'].hint
         fact['hash'] = self.hash().hash
-        fact['token'] = d['token']
+        token = d['token'].encode('ascii')
+        token = base64.b64encode(token)
+        token = token.decode('ascii')
+        fact['token'] = token
         fact['sender'] = d['sender'].hinted()
 
         items = list()
@@ -137,7 +142,7 @@ class Transfers(Operation):
         d = self.as_dict()['body'].as_dict()
         oper = {}
         oper['memo'] = d['memo'].memo
-        oper['hint'] = d['h'].hint
+        oper['_hint'] = d['h'].hint
         oper['fact'] = d['fact'].to_dict()
 
         fact_signs = list()
@@ -145,6 +150,8 @@ class Transfers(Operation):
         for _sg in _sgs:
             fact_signs.append(_sg.to_dict())
         oper['fact_signs'] = fact_signs
+
+        oper['hash'] = self.hash().hash
 
         return oper
 

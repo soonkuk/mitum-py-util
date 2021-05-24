@@ -2,7 +2,6 @@ from mitum.common import bconcat
 from mitum.constant import NETWORK_ID
 from mitum.key.btc import to_btc_keypair
 
-
 EXPECTED_SIGNATURE = "381yXZNahRQxzrGMLscyfCxUCp4XNpzDWDPxAfm8nqUwpzKEDxTFR8mFbqTnJVG39vRjrf28hEPKEnoAFXoFh6VAjBJgsJTG"
 
 FACT_HASH = b"'\x92\xa6\xbe\x15\xbcG\x9f6Dd\xe8B\xad5\x1d\xd0?\x8a\xd8\xc7B9`X\xb2\xbc\x9c\x8a@\x91-"

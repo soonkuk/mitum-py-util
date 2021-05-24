@@ -1,4 +1,3 @@
-import base58
 import stellar_sdk as stellar
 from mitum.hint import STELLAR_PBLCKEY, STELLAR_PRIVKEY
 from mitum.key.base import BaseKey, KeyPair, to_basekey

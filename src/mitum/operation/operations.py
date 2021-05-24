@@ -1,12 +1,20 @@
-from mitum.common import Hint, Int, getNewToken, parseAddress
+import json
+
+import base58
+from mitum.common import (Hint, Int, bconcat, getNewToken, iso8601TimeStamp,
+                          parseAddress, parseISOtoUTC)
 from mitum.constant import THRESHOLDS, VERSION
-from mitum.hint import (MC_ADDRESS, MC_AMOUNT, MC_CREATE_ACCOUNTS_OP,
-                        MC_CREATE_ACCOUNTS_OP_FACT,
+from mitum.hash import sha
+from mitum.hint import (BTC_PRIVKEY, ETHER_PRIVKEY, MC_ADDRESS, MC_AMOUNT,
+                        MC_CREATE_ACCOUNTS_OP, MC_CREATE_ACCOUNTS_OP_FACT,
                         MC_CREATE_ACCOUNTS_SINGLE_AMOUNT, MC_KEY, MC_KEYS,
                         MC_KEYUPDATER_OP, MC_KEYUPDATER_OP_FACT,
                         MC_TRANSFERS_OP, MC_TRANSFERS_OP_FACT,
-                        MC_TRNASFERS_ITEM_SINGLE_AMOUNT)
+                        MC_TRNASFERS_ITEM_SINGLE_AMOUNT, SEAL, STELLAR_PRIVKEY)
 from mitum.key.base import Key, Keys, KeysBody, to_basekey
+from mitum.key.btc import to_btc_keypair
+from mitum.key.ether import to_ether_keypair
+from mitum.key.stellar import to_stellar_keypair
 from mitum.operation.base import Address, Amount, Memo
 from mitum.operation.create_accounts import (CreateAccounts,
                                              CreateAccountsBody,
@@ -72,7 +80,7 @@ def generate_create_accounts(net_id, pk, sender, amt, ks):
 
     fact_body = CreateAccountsFactBody(
         Hint(MC_CREATE_ACCOUNTS_OP_FACT, VERSION),
-        getNewToken(),
+        iso8601TimeStamp(),
         Address(
             Hint(h_sender, VERSION),
             k_sender,
@@ -112,7 +120,7 @@ def generate_key_updater(net_id, pk, target, new_pubk, weight, cid):
 
     fact_body = KeyUpdaterFactBody(
         Hint(MC_KEYUPDATER_OP_FACT, VERSION),
-        getNewToken(),
+        iso8601TimeStamp(),
         Address(
             Hint(MC_ADDRESS, VERSION),
             k_target,
@@ -172,7 +180,7 @@ def generate_transfers(net_id, pk, sender, receiver, amt):
     h_sender, k_sender = parseAddress(sender)
     fact_body = TransfersFactBody(
         Hint(MC_TRANSFERS_OP_FACT, VERSION),
-        getNewToken(),
+        iso8601TimeStamp(),
         Address(
             Hint(h_sender, VERSION),
             k_sender,
@@ -202,3 +210,44 @@ def generate_transfers(net_id, pk, sender, receiver, amt):
     )
 
     return op
+
+def generate_seal(file_name, net_id, pk, opers):
+    type, key = parseAddress(pk)
+
+    if type == BTC_PRIVKEY:
+        kp = to_btc_keypair(key)
+    elif type == ETHER_PRIVKEY:
+        kp = to_ether_keypair(key)
+    elif type == STELLAR_PRIVKEY:
+        kp = to_stellar_keypair(key)
+
+    signed_at = iso8601TimeStamp()
+    bsigned_at = parseISOtoUTC(signed_at).encode()
+
+    bsigner = kp.public_key.hinted().encode()
+
+    bopers = bytearray()
+    for op in opers:
+        bopers += op.hash().digest
+
+    body_hash = sha.sum256(bconcat(bsigner, bsigned_at, bopers))
+
+    signature = kp.sign(bconcat(body_hash.digest, net_id.encode()))
+
+    hash = sha.sum256(bconcat(body_hash.digest, signature))
+
+    seal = {}
+    seal['_hint'] = Hint(SEAL, VERSION).hint
+    seal['hash'] = hash.hash
+    seal['body_hash'] = body_hash.hash
+    seal['signer'] = kp.public_key.hinted()
+    seal['signature'] = base58.b58encode(signature).decode()
+    seal['signed_at'] = getNewToken(signed_at)
+
+    operations = list()
+    for op in opers:
+        operations.append(op.to_dict())
+    seal['operations'] = operations
+
+    with open(file_name, "w") as fp:
+            json.dump(seal, fp)

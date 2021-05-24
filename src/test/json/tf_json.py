@@ -10,4 +10,4 @@ ac1_addr = "CHmkPR6GqTZfxrs1ptoWupsgvzkgvNdE7ZzhvimGUErg-a000:0.0.1"
 
 transfers = generate_transfers("mitum", ac0_prv, ac0_addr, ac1_addr, (100, "MCC"))
 
-transfers.to_json("transfers.json")
+transfers.to_json("./test/json/transfers.json")

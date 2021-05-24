@@ -10,7 +10,6 @@ from mitum.operation.create_accounts import (CreateAccounts,
                                              CreateAccountsFactBody,
                                              CreateAccountsItem)
 
-
 EXPECTED_KEYS_HASH = "5terLZQX4fTPpjmBsjPjvwBLMY78qRWhKZ6j1kEiDNeV"
 EXPECTED_FACT_HASH = "3fUbmP26sMkqED7qAiBau5ZdEyUrscf6sZWJmxayeqN4"
 EXPECTED_OP_HASH = "2RaYS4AkX9fnzFUoEdYSVgQNpcCmwwC2WKidfX5FiWmY"

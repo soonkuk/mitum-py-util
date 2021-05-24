@@ -11,18 +11,18 @@ class BaseKey(rlp.Serializable):
         ('k', text),
     )
 
-    def hint(self):
-        return self.as_dict()['h']
-
     @property
     def key(self):
         return self.as_dict()['k']
 
-    def to_bytes(self):
-        return self.as_dict()['k'].encode()
+    def hint(self):
+        return self.as_dict()['h']
 
     def hinted(self):
         return self.as_dict()['k'] + "-" + self.as_dict()['h'].hint
+
+    def to_bytes(self):
+        return self.as_dict()['k'].encode()
     
 
 class Key(rlp.Serializable):
@@ -47,7 +47,7 @@ class Key(rlp.Serializable):
         key = {}
         key['_hint'] = d['h'].hint
         key['weight'] = d['w'].value
-        key['key'] = d['k'].key
+        key['key'] = d['k'].hinted()
         return key
 
 
