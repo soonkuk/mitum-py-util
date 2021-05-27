@@ -1,4 +1,6 @@
 # mitum-py-util
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsoonkuk%2Fmitum-py-util.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsoonkuk%2Fmitum-py-util?ref=badge_shield)
+
 
 'mitum-py-util' will introduce the usage of mitum-currency for python.
 
@@ -237,3 +239,6 @@ Hdu7PqjA1p55GAcBiULmCAfzoksdwW1oSxaMH83kw9BJ
 b'jf\x10J>\xb9O]\x14\xab}d,r\x88(B\xab\x9a\xb1x\x18\x04\xeb\x10!\x9f\xebY\xa5v"'
 8ALUvxZ5Q1qQEsPUcHsoAzuzEp8Bm4HQpYqNNSafjDAR
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsoonkuk%2Fmitum-py-util.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsoonkuk%2Fmitum-py-util?ref=badge_large)
