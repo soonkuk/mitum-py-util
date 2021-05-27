@@ -35,12 +35,9 @@ $ python setup.py install
 
 'mitum-py-util' provides three operations to be generated,
 
-* Create-Accounts
-    Create an account corresponding to any public key with a pre-registered account.
-* Key-Updater
-    Update the public key of the account to something else.
-* Transfers
-    Transfer tokens from the account to another account.
+* 'Create-Accounts' creates an account corresponding to any public key with a pre-registered account.
+* 'Key-Updater' updates the public key of the account to something else.
+* 'Transfers' transfers tokens from the account to another account.
 
 'mitum-currency' supports various kinds of operations, but 'mitum-py-util' will provide these frequently used operations.
 
@@ -61,7 +58,7 @@ To generate an operation, 'currency id' and 'initial amount' must be set. With s
 
 #### Usage
 
-```
+```python
 generate_create_accounts(network_id, source_private_key, source_address, amount, target_keys)
 ```
 
@@ -70,7 +67,7 @@ generate_create_accounts(network_id, source_private_key, source_address, amount,
 
 #### Example
 
-```
+```python
 >>> from mitumc.operation import generate_create_accounts
 
 >>> source_private_key = "L1oTaxcPztdqAU7ZzrHMWLnX2iUm6MhMW3RxT5YByiEpceDbUhPE-0112:0.0.1"
@@ -90,57 +87,11 @@ generate_create_accounts(network_id, source_private_key, source_address, amount,
 
 You can create json file of the operation by to_json(file_name) method.
 
-```
+```python
 >>> createAccounts.to_json("create_account.json")
 ```
 
-Then the result will be,
-
-```
-{
-    "memo": "",
-    "_hint": "a006:0.0.1",
-    "fact": {
-        "_hint": "a005:0.0.1",
-        "hash": "HQHU6HN9yKLpq29Wg2EcM4Lft9qzAXTMQWu9tJLGjXkA",
-        "token": "MjAyMS0wNS0yN1QwMjozNzoxNy44NTc2MjgrMDA6MDA=",
-        "sender": "8AwAwFAaboopKDH7Nriq9Sq2eb2xjThMBFtWWCt3iebG-a000:0.0.1",
-        "items": [
-            {
-                "_hint": "a025:0.0.1",
-                "keys": {
-                    "_hint": "a004:0.0.1",
-                    "hash": "CHmkPR6GqTZfxrs1ptoWupsgvzkgvNdE7ZzhvimGUErg",
-                    "keys": [
-                        {
-                            "_hint": "a003:0.0.1",
-                            "weight": 100,
-                            "key": "27LZo3wxW5T9VH5Da1La9bCSg1VfnaKtNvb3Gmg115N6X-0113:0.0.1"
-                        }
-                    ],
-                    "threshold": 100
-                },
-                "amounts": [
-                    {
-                        "_hint": "a022:0.0.1",
-                        "amount": "100",
-                        "currency": "MCC"
-                    }
-                ]
-            }
-        ]
-    },
-    "hash": "EW8fuvRoHmXpKCuXCU5gc1kR12baZSRdXYPYkkomAd2W",
-    "fact_signs": [
-        {
-            "_hint": "0150:0.0.1",
-            "signer": "sMs6R5BF9EsVcGV6enuwVZ4hv4H4y48RNy2yPJg6F6RH-0113:0.0.1",
-            "signature": "381yXZW8oWYsqkwriNG2zPZKSc7nUAnYQytMaJi8uzk6EwD4KU5d4t3pkf7hjZjJyLskeyKhyCwVpfLfDtJUYzGtxuVry1Gy",
-            "signed_at": "2021-05-27T02:37:18.620253Z"
-        }
-    ]
-}
-```
+Then the result will be like [this](example/create_accounts.json)
 
 ### Generate Key-Updater
 
@@ -148,7 +99,7 @@ Key-Updater literally supports to update cource public key to something else.
 
 #### Usage
 
-```
+```python
 generate_key_updater(network_id, source_private_key, source_address, target_public_key, weight, currency_id)
 ```
 
@@ -156,7 +107,7 @@ generate_key_updater(network_id, source_private_key, source_address, target_publ
 
 #### Example
 
-```
+```python
 >>> from mitumc.operation import generate_key_updater
 
 >>> source_private_key = "L1oTaxcPztdqAU7ZzrHMWLnX2iUm6MhMW3RxT5YByiEpceDbUhPE-0112:0.0.1"
@@ -175,7 +126,7 @@ To generate an operation, you must prepare target address, not public key. Trans
 
 #### Usage
 
-```
+```python
 generate_transfers(network_id, source_private_key, source_address, target_address, amount)
 ```
 
@@ -183,7 +134,7 @@ generate_transfers(network_id, source_private_key, source_address, target_addres
 
 #### Example
 
-```
+```python
 >>> from mitumc.operation import generate_transfers
 
 >>> source_private_key = "L1oTaxcPztdqAU7ZzrHMWLnX2iUm6MhMW3RxT5YByiEpceDbUhPE-0112:0.0.1"
@@ -196,7 +147,7 @@ generate_transfers(network_id, source_private_key, source_address, target_addres
 
 >>> transfers = generate_transfers(network_id, source_private_key, source_address, target_address, amount)
 >>> transfers.to_json("transfers.json")
-``
+```
 
 ## Generate New Seal
 
@@ -213,16 +164,16 @@ Registration of 'signing key' is not neccessary.
 
 ### Usage
 
-```
+```python
 generate_seal(file_name, network_id, signing_key, operations)
 ```
 
 * 'signing key' must be a private key of 'mitum-currency' kepair.
-* Every elements of operations list must be pre-constructed by 'generate_create_accounts', 'generate_key_updater', or 'generate_transfers'
+* Every elements of operations list must be pre-constructed by 'generate_create_accounts', 'generate_key_updater', or 'generate_transfers'.
 
 ### Example
 
-```
+```python
 >>> from mitumc.operation import generate_seal, generate_create_accounts, generate_key_updater, generate_transfers
 
 >>> source_prv = "L5GTSKkRs9NPsXwYgACZdodNUJqCAWjz2BccuR4cAgxJumEZWjok-0112:0.0.1"
@@ -243,133 +194,13 @@ generate_seal(file_name, network_id, signing_key, operations)
 >>> generate_seal("seal.json", network_id, source_prv, operations)
 ```
 
-Then the result will be,
-
-```
-{
-    "_hint": "0151:0.0.1",
-    "hash": "6Rmp2NfB4bbqAXLYjaMmhA3WR7yLBVZRsUERvqY4BmHm",
-    "body_hash": "9bdLGeBZq9VJzo2hqRTQvZgHHazZy38SeaJN6kHAN9dU",
-    "signer": "rcrd3KA2wWNhKdAP8rHRzfRmgp91oR9mqopckyXRmCvG-0113:0.0.1",
-    "signature": "AN1rKvtjRAmo6w1j5GfWiQcvQq3kDUC5nw6D7oFKtwUqbitGxy3eBTKDrJ7oMbPg11fd7mn2PKWQnYo3MPbNbNh8pPGF1WjCL",
-    "signed_at": "2021-05-27T03:09:28.235041Z",
-    "operations": [
-        {
-            "memo": "",
-            "_hint": "a006:0.0.1",
-            "fact": {
-                "_hint": "a005:0.0.1",
-                "hash": "7fAEFHFGNYZwhTGsnZnFfHDECvyMncTje1xViqe8tjNf",
-                "token": "MjAyMS0wNS0yN1QwMzowOToyNi4xMDI1NDkrMDA6MDA=",
-                "sender": "8PdeEpvqfyL3uZFHRZG5PS3JngYUzFFUGPvCg29C2dBn-a000:0.0.1",
-                "items": [
-                    {
-                        "_hint": "a025:0.0.1",
-                        "keys": {
-                            "_hint": "a004:0.0.1",
-                            "hash": "8HQt6CfBVgMhLmPxcataTF2CXHuw2Km32FAcW7FXmQZ3",
-                            "keys": [
-                                {
-                                    "_hint": "a003:0.0.1",
-                                    "weight": 100,
-                                    "key": "GBYLIBJYZP6ZIYPFGOZSXSAPMRDA6XXRKNSMOMRCKNV2YZ35DGRPEQ35-0111:0.0.1"
-                                }
-                            ],
-                            "threshold": 100
-                        },
-                        "amounts": [
-                            {
-                                "_hint": "a022:0.0.1",
-                                "amount": "100",
-                                "currency": "MCC"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "hash": "5vJ8e7EgrHke3THBdDBbZycb92WnPjLgsLFaMPyGSHj9",
-            "fact_signs": [
-                {
-                    "_hint": "0150:0.0.1",
-                    "signer": "rcrd3KA2wWNhKdAP8rHRzfRmgp91oR9mqopckyXRmCvG-0113:0.0.1",
-                    "signature": "AN1rKvtiNYxMz2wAx2Ep5mt1LBBYfANPjF3UasrcAEYVgiXFEhkFV5SUrbJFpj114B91MN1v6MEkPdrGSLf3PGLSpY54bJ515",
-                    "signed_at": "2021-05-27T03:09:26.885598Z"
-                }
-            ]
-        },
-        {
-            "memo": "",
-            "_hint": "a010:0.0.1",
-            "fact": {
-                "_hint": "a009:0.0.1",
-                "hash": "HV2RCKFemyqiwa9Zao9poroMJjy6Eki4hZv7NYwScM8E",
-                "token": "MjAyMS0wNS0yN1QwMzowOToyNi44ODU1OTgrMDA6MDA=",
-                "target": "8HQt6CfBVgMhLmPxcataTF2CXHuw2Km32FAcW7FXmQZ3-a000:0.0.1",
-                "keys": {
-                    "_hint": "a004:0.0.1",
-                    "hash": "4ZSnntvo16Bfc7USqAdTiQQ3KwsM7TmMCWZigxSmTnut",
-                    "keys": [
-                        {
-                            "_hint": "a003:0.0.1",
-                            "weight": 100,
-                            "key": "GCV6WZ5U7HXFOXWTMLUXCG4PW3KP2YYTMAPZDE3IIVWQY7Q6SYPG63TZ-0111:0.0.1"
-                        }
-                    ],
-                    "threshold": 100
-                },
-                "currency": "MCC"
-            },
-            "hash": "3QCVBAAWSsy2U9U44SVzmBY1Rvb5FTW2BMHWQuKVLsiw",
-            "fact_signs": [
-                {
-                    "_hint": "0150:0.0.1",
-                    "signer": "GBYLIBJYZP6ZIYPFGOZSXSAPMRDA6XXRKNSMOMRCKNV2YZ35DGRPEQ35-0111:0.0.1",
-                    "signature": "62z2QMLjBYwGy8nhd1kMSiFkjP1iXUd9jXcHSsXBU6RWvrxwfnG7fxz6gfFZc8YvtjMnATdhZFXFdxSHoGS3u6tc",
-                    "signed_at": "2021-05-27T03:09:26.885598Z"
-                }
-            ]
-        },
-        {
-            "memo": "",
-            "_hint": "a002:0.0.1",
-            "fact": {
-                "_hint": "a001:0.0.1",
-                "hash": "2hVtFF1MLHBYAR8jjc4hLfCn8vRYhFmNRNQoZZrQrUyf",
-                "token": "MjAyMS0wNS0yN1QwMzowOToyNi44ODU1OTgrMDA6MDA=",
-                "sender": "8PdeEpvqfyL3uZFHRZG5PS3JngYUzFFUGPvCg29C2dBn-a000:0.0.1",
-                "items": [
-                    {
-                        "_hint": "a027:0.0.1",
-                        "receiver": "8dsqP9dUPKv3TjJg6DCKJ7NE7vsMx47Gc4VrseEcyXtt-a000:0.0.1",
-                        "amounts": [
-                            {
-                                "_hint": "a022:0.0.1",
-                                "amount": "100",
-                                "currency": "MCC"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "fact_signs": [
-                {
-                    "_hint": "0150:0.0.1",
-                    "signer": "rcrd3KA2wWNhKdAP8rHRzfRmgp91oR9mqopckyXRmCvG-0113:0.0.1",
-                    "signature": "AN1rKvtZRPgcujuUDj62M862srjfFvxR57tbVbq4dFrGPGnrwoCwem3ZTJCuCLGVRCtJVz1Q4BWPSk5MpGg6G2jMu4HE9g8Q7",
-                    "signed_at": "2021-05-27T03:09:27.643334Z"
-                }
-            ],
-            "hash": "JAet6C6X7Towd7eq5jUXydZKCq3naVcmhVuDcoky7WA6"
-        }
-    ]
-}
-```
+Then the result will be like [this](example/seal.json).
 
 ## Send Seal to Network
 
 Created seal json files will be used to send seals by 'mitum-currency'.
 
-Use below command to send them to the target network. (See 'mitum-currency' for details)
+Use below command to send them to the target network. (See [mitum-currency](https://github.com/ProtoconNet/mitum-currency) for details)
 
 ```
 $ bin/mc seal send --network-id=$NETWORK_ID $SIGNING_KEY --seal=seal.json
@@ -384,7 +215,7 @@ $ bin/mc seal send --network-id=$NETWORK_ID $SIGNING_KEY --seal=seal.json
 #### Example
 
 mitumc_hash.py
-```
+```python
 >>> from mitumc.hash import sha256, sum256
 
 >>> msg = b'mitum'
