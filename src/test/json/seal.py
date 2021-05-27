@@ -25,5 +25,4 @@ transfers = generate_transfers("mitum", source_prv, source_addr, ac2_addr, (100,
 
 operations = [createAccounts, keyUpdater, transfers]
 
-generate_seal("./test/json/seal.json", "mitum", source_prv, operations)
-transfers.to_json("./test/json/transfers.json")
+generate_seal("seal.json", "mitum", source_prv, operations)
